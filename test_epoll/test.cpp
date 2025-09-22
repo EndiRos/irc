@@ -10,6 +10,17 @@
 #include <arpa/inet.h>
 #include <map>
 #include <string>
+#include "clase.cpp"
+#include "vector"
+
+typedef struct user
+{
+    std::string nick;
+    std::string name;
+    u_int16_t   port;
+    char        ip[INET_ADDRSTRLEN];
+    std::vector<std::string> op; 
+};
 
 int create_listen_soccket (uint16_t port){
     int fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -62,6 +73,8 @@ int main() {
     // Buffers por conexión
     std::map<int, std::string> inbuf;
     std::map<int, std::string> outbuf;
+    std::map<std::string, std::vector<int>> chanels;
+    std::map<int, user> users;
 
     int epfd = epoll_create1(EPOLL_CLOEXEC);
     if (epfd == -1) {
@@ -132,6 +145,7 @@ int main() {
                     if (fdfl != -1) (void)fcntl(cfd, F_SETFD, fdfl | FD_CLOEXEC);
 
                     // IP:puerto
+                    
                     char ip[INET_ADDRSTRLEN] = {0};
                     inet_ntop(AF_INET, &cli.sin_addr, ip, sizeof(ip));
                     uint16_t c_port = ntohs(cli.sin_port);
@@ -145,6 +159,10 @@ int main() {
                         close(cfd);
                     } else {
                         std::cout << "new client fd=" << cfd << " [" << ip << ":" << c_port << "]\n";
+                        
+                        users[cfd].ip = ip;
+                        users[cfd].port = c_port;
+
                         inbuf[cfd] = "";
                         outbuf[cfd] = "";
                     }
@@ -187,6 +205,7 @@ int main() {
                     std::string line = ib.substr(0, pos);
                     if (!line.empty() && line[line.size()-1] == '\r') line.erase(line.size()-1);
 
+                    // aqui el parseo de lo recivido   
                     std::cout << "fd " << fd << " <= " << line << '\n';
                     ob += "You said: " + line + "\r\n";
 
