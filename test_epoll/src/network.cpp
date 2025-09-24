@@ -6,13 +6,14 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 09:00:56 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/09/23 13:45:59 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/09/24 10:25:56 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "network.hpp"
 #include "users.hpp"
+#include "commands.hpp"
 
     
 void Network::setup_socket()
@@ -259,8 +260,11 @@ void Network::new_connection()
 
 void Network::process_line(int fd, std::string& ib )
 {
-    std::string::size_type pos = ib.find('\n');
-    if (pos == std::string::npos)
+    std::string::size_type first = ib.find('\n');
+    if (first == std::string::npos)
+        return;
+    std::string::size_type second = ib.find('\n', first + 1);
+    if (second == std::string::npos && ib.substr(0,3) == "CAP")
         return;
     if (!authed_[fd]) 
     {
@@ -288,7 +292,10 @@ void Network::process_line(int fd, std::string& ib )
             authed_[fd] = true;
         }
         else 
+        {
             std::cout << "Existing user: " << tmp_user_->get_nick() << "enter on server" << std::endl;
+            authed_[fd] = true;
+        }
         send_small(fd, "Wellcome to server " + tmp_user_->get_nick() + "\r\n");
         delete tmp_user_;
     }
@@ -318,6 +325,7 @@ void Network::process_line(int fd, std::string& ib )
     }
 void Network::clean_msg(std::string& ib)
 {
+
     for (int i = 0; i < 4; i++)
     {
         std::string::size_type pos = ib.find('\n');
@@ -327,49 +335,19 @@ void Network::clean_msg(std::string& ib)
     }
 }
 
-std::string trim_msg(std::string line, int lenght,char cha = '\n', int init = 0)
-{
-    line.erase(0,lenght);
-    while (!line.empty() && (line[0]==' '||line[0]=='\t'))
-        line.erase(0,1);
-    int to = line.find(cha);
-    return  (line.substr(0,to));
-}
 
-bool Network::authentificate(int fd, std::string ib)
+
+bool Network::authentificate(int fd, std::string msg)
 {
-    int pos = 0;
-    while ((pos = ib.find('\n')) != std::string::npos) 
-    {
-        std::string line = ib.substr(0, pos);
-        if (!line.empty() && line[line.size()-1] == '\r')
-            line.erase(line.size()-1);
-        ib.erase(0, pos + 1);
-        if (line.substr(0,3) == "CAP")
-            continue;// Soporta formato PASS <pwd>
-        else if (line.substr(0,4) == "PASS")
-        {
-            std::string msg = trim_msg(line,4);
-            if (msg != pass_)
-                return (1);
-            tmp_user_->set_authen(true);
-        }
-        else if (line.substr(0,4) == "NICK")
-            tmp_user_->set_nick( trim_msg(line,4));
-        else if (line.substr(0,4) == "USER")
-       {
-            tmp_user_->set_name(trim_msg(line, 4, ' '));
-            line.erase(0,line.find(':'));
-            tmp_user_->set_real_name(trim_msg(line,line.find('\n')));
-       }
-    }
+    
+    if (auth_user(msg, *tmp_user_, pass_))
+        return (1);
     return 0; 
 }
 
 
 Network::Network(uint16_t port, std::string password):port_ (port), pass_(password)
 {
-    User *tmp_user_ = new User();
     server_ip_ = pick_ipv4();  
     setup_socket();
     bind_socket();
