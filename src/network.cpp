@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 09:00:56 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/09/24 10:25:56 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/09/24 13:38:00 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,20 +24,22 @@ void Network::setup_socket()
     
     yes_= 1;
     fd_ = socket(AF_INET, SOCK_STREAM, 0);
-    if (fd_ == -1)
-        throw Err::make("socket failed", errno);
+    if (fd_ == -1){
+        int e = errno;
+        throw Err::make("socket failed",e);
+    }
 
     if (setsockopt(fd_, SOL_SOCKET, SO_REUSEADDR, &yes_, sizeof(yes_)) == -1) {
         int e = errno;
         close(fd_);
-        throw Err::make("setsockopt SO_REUSEADDR failed", e);
+        throw Err::make("setsockopt SO_REUSEADDR failed",e);
     }
 
     flags_ = fcntl(fd_, F_GETFL, 0);
     if (flags_ == -1 || fcntl(fd_, F_SETFL, flags_ | O_NONBLOCK) == -1) {
-        int e = errno;
         close(fd_);
-        throw Err::make("fcntl O_NONBLOCK failed", e);
+        int e = errno;
+        throw Err::make("fcntl O_NONBLOCK failed",e);
     }
 
     fdflags_ = fcntl(fd_, F_GETFD, 0);
@@ -45,7 +47,7 @@ void Network::setup_socket()
         (void)fcntl(fd_, F_SETFD, fdflags_ | FD_CLOEXEC);
     
     
-    std::memset(&addr_, 0, sizeof(addr_));
+    my_memset(&addr_, 0, sizeof(addr_));
     addr_.sin_family = AF_INET;
     addr_.sin_addr.s_addr = htonl(INADDR_ANY);
     addr_.sin_port = htons(port_);
@@ -108,7 +110,7 @@ void Network::epoll_setup()
         return ;
     }
     epoll_event ev_;
-    std::memset(&ev_, 0, sizeof(ev_));
+    my_memset(&ev_, 0, sizeof(ev_));
     ev_.events = EPOLLIN;
     ev_.data.fd = fd_;
     
@@ -176,7 +178,7 @@ void Network::epoll_run()
                     {
                         if (errno == EINTR) continue;
                         if (errno == EAGAIN || errno == EWOULDBLOCK) break;
-                        std::cerr << "read failed fd=" << fd << ": " << std::strerror(errno) << '\n';
+                        std::cerr << "read failed fd=" << fd << ": " ": error code " << errno << '\n';
                         epoll_ctl(epfd_, EPOLL_CTL_DEL, fd, 0);
                         close(fd);
                         inbuf_.erase(fd);
@@ -193,7 +195,7 @@ void Network::epoll_run()
                     // Si no hay más datos (EAGAIN se detecta arriba), salimos
                     // (el while(true) rompe por break en read)
                     // Continuará con más eventos epoll
-                    break;
+                //break;
                 }
             }
         }
@@ -239,7 +241,7 @@ void Network::new_connection()
         inet_ntop(AF_INET, &cli.sin_addr, ip, sizeof(ip));
         uint16_t c_port = ntohs(cli.sin_port);
         epoll_event cev;
-        std::memset(&cev, 0, sizeof(cev));
+        my_memset(&cev, 0, sizeof(cev));
         cev.events = EPOLLIN;
         cev.data.fd = cfd;
         if (epoll_ctl(epfd_, EPOLL_CTL_ADD, cfd, &cev) == -1) {
@@ -269,7 +271,7 @@ void Network::process_line(int fd, std::string& ib )
     if (!authed_[fd]) 
     {
         // Password esperado
-        if (authentificate(fd, ib))
+        if (authentificate(ib))
         {
             send_small(fd, ":server NOTICE * :Bad password\r\n");
             epoll_ctl(epfd_, EPOLL_CTL_DEL, fd, 0);
@@ -335,9 +337,7 @@ void Network::clean_msg(std::string& ib)
     }
 }
 
-
-
-bool Network::authentificate(int fd, std::string msg)
+bool Network::authentificate(std::string msg)
 {
     
     if (auth_user(msg, *tmp_user_, pass_))

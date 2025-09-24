@@ -6,29 +6,30 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 09:31:48 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/09/23 11:14:08 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/09/24 14:04:08 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <stdexcept>
-#include <stdint.h>
+#include <stdexcept>0
 #include <sys/socket.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <cerrno>
+#include <errno.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <cstring>
+#include <string>
 #include <sys/epoll.h>
 #include <iostream>
 #include <net/if.h>
 #include <ifaddrs.h>
 #include <netdb.h>
-#include<map>
+#include <map>
+#include <stdlib.h>
 
 #include "users.hpp"
+#include "utils.hpp"
 
 class Network
 {
@@ -48,16 +49,28 @@ class Network
         User *tmp_user_;
     
 
-    struct Err {
-        static std::runtime_error make(const char *msg, int e) {
-            std::string s(msg);
-            if (e) {
-                s += ": ";
-                s += std::strerror(e);
+        struct Err {
+            static std::runtime_error make(const char *msg, int e) {
+                std::string s(msg);
+                if (e) {
+                    std::string num;
+                    int n = e;
+                    if (n == 0)
+                        num = "0";
+                    else {
+                        bool neg = false;
+                        if (n < 0) { neg = true; n = -n; }
+                        while (n > 0) {
+                            num.insert(num.begin(), '0' + (n % 10));
+                            n /= 10;
+                        }
+                        if (neg) num.insert(num.begin(), '-');
+}
+                    s += num;
+                }
+                return std::runtime_error(s);
             }
-            return std::runtime_error(s);
-        }
-    };
+        };
         void setup_socket();
         std::string pick_ipv4();
         void bind_socket();
@@ -66,7 +79,7 @@ class Network
         void send_small(int fd, const std::string &msg);
         void new_connection();
         void process_line(int fd, std::string &ib);
-        bool authentificate(int fd, std::string candidate);
+        bool authentificate(std::string candidate);
         void new_user();
         void clean_msg(std::string& ib);
     public:

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/24 14:00:49 by enetxeba          #+#    #+#             */
+/*   Updated: 2025/09/24 14:00:53 by enetxeba         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 
 #include "network.hpp"
 
@@ -9,7 +21,8 @@ int main(int argc, char **argv)
         return 1;
     }    
     std::string password =argv[2];
-    uint16_t port = atoi (argv[1]);
+    int port = atoi(argv[1]);
     Network *net = new Network(port, password);
+    (void) net;
     return 0;
 }
