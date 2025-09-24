@@ -10,7 +10,6 @@
 #include <arpa/inet.h>
 #include <map>
 #include <string>
-#include "clase.cpp"
 #include "vector"
 
 typedef struct user

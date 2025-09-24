@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 09:00:56 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/09/19 12:32:14 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/09/23 13:45:59 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ void Network::epoll_setup()
     std::cout << "Listening on " << server_ip_ <<  " : "<< port_ << std::endl;
 }
 
-void Network::epoll_run(User users) 
+void Network::epoll_run() 
 {
     const int MAX_EVENTS = 64;
     epoll_event events[MAX_EVENTS];
@@ -147,7 +147,7 @@ void Network::epoll_run(User users)
                 continue;
             }
             // Aceptar nuevas conexiones
-            if (fd == fd_ && (evs & EPOLLIN)) 
+            if (fd == fd_ && (evs & EPOLLIN) ) 
             {
                 new_connection();
                 continue;
@@ -183,6 +183,7 @@ void Network::epoll_run(User users)
                         break;
                     }
                     process_line(fd, inbuf_[fd]);
+                    inbuf_[fd].clear();
                     // Procesar líneas completas
                 }
                     // Si cerramos dentro, salir del bucle de lectura
@@ -249,6 +250,8 @@ void Network::new_connection()
         inbuf_[cfd] = "";
         authed_[cfd] = false;
         tmp_user_= new User();
+        tmp_user_->set_ip(ip);
+        tmp_user_->set_port(c_port);
         // Mensaje inicial opcional
         send_small(cfd, ":server NOTICE * :Send password (plain or 'PASS <pwd>')\r\n");
     }
@@ -256,7 +259,86 @@ void Network::new_connection()
 
 void Network::process_line(int fd, std::string& ib )
 {
-    std::string::size_type pos;
+    std::string::size_type pos = ib.find('\n');
+    if (pos == std::string::npos)
+        return;
+    if (!authed_[fd]) 
+    {
+        // Password esperado
+        if (authentificate(fd, ib))
+        {
+            send_small(fd, ":server NOTICE * :Bad password\r\n");
+            epoll_ctl(epfd_, EPOLL_CTL_DEL, fd, 0);
+            close(fd);
+            inbuf_.erase(fd);
+            authed_.erase(fd);
+            delete tmp_user_;
+            return; // salir de while líneas
+        }
+        std::map<std::string, User>::iterator it = user_list.find(tmp_user_->get_nick());
+        if (it ==user_list.end())
+        {
+            user_list[tmp_user_->get_nick()].set_authen(tmp_user_->get_authen());
+            user_list[tmp_user_->get_nick()].set_nick(tmp_user_->get_nick());
+            user_list[tmp_user_->get_nick()].set_name(tmp_user_->get_name());
+            user_list[tmp_user_->get_nick()].set_real_name(tmp_user_->get_real_name());
+            user_list[tmp_user_->get_nick()].set_ip(tmp_user_->get_ip());
+            user_list[tmp_user_->get_nick()].set_port(tmp_user_->get_port());
+            std::cout << "New user: " << tmp_user_->get_nick() << " enter on server" << std::endl;
+            authed_[fd] = true;
+        }
+        else 
+            std::cout << "Existing user: " << tmp_user_->get_nick() << "enter on server" << std::endl;
+        send_small(fd, "Wellcome to server " + tmp_user_->get_nick() + "\r\n");
+        delete tmp_user_;
+    }
+    else 
+    {
+        //aqui viene la busqueda de comandos, ejecutarlos  
+        // Ya autenticado: procesar otros comandos
+        std::string look = ib;
+        clean_msg(look);
+        std::cout << look.substr(0,4) <<std::endl;
+        if (look.substr(0,4) == "JOIN")
+        {
+            std::string msg = ":enetxeba!enetxeba@127.0.0.1 JOIN :#canal\r\n\
+                            :server 353 enetxeba = #canal :juan\r\n\
+                            :server 366 enetxeba #canal :End of /NAMES list.\r\n";
+            send_small(fd,msg);
+           return;
+        }
+        else 
+        {
+            std::cout << "fd " << fd << " <= " << ib << '\n';
+            send_small(fd, ":server NOTICE * :You said: " + ib + "\r\n");
+            return;
+        }
+    }
+        
+    }
+void Network::clean_msg(std::string& ib)
+{
+    for (int i = 0; i < 4; i++)
+    {
+        std::string::size_type pos = ib.find('\n');
+        if (pos == std::string::npos)
+            break;
+        ib.erase(0,pos + 1);
+    }
+}
+
+std::string trim_msg(std::string line, int lenght,char cha = '\n', int init = 0)
+{
+    line.erase(0,lenght);
+    while (!line.empty() && (line[0]==' '||line[0]=='\t'))
+        line.erase(0,1);
+    int to = line.find(cha);
+    return  (line.substr(0,to));
+}
+
+bool Network::authentificate(int fd, std::string ib)
+{
+    int pos = 0;
     while ((pos = ib.find('\n')) != std::string::npos) 
     {
         std::string line = ib.substr(0, pos);
@@ -264,60 +346,26 @@ void Network::process_line(int fd, std::string& ib )
             line.erase(line.size()-1);
         ib.erase(0, pos + 1);
         if (line.substr(0,3) == "CAP")
-            break;
-        if (!authed_[fd]) 
+            continue;// Soporta formato PASS <pwd>
+        else if (line.substr(0,4) == "PASS")
         {
-            // Password esperado
-            authentificate(fd, line); 
+            std::string msg = trim_msg(line,4);
+            if (msg != pass_)
+                return (1);
+            tmp_user_->set_authen(true);
         }
-        if else (authed_[fd] && ) 
-        else 
-        {
-            //aqui viene la busqueda de comandos, ejecutarlos  
-            // Ya autenticado: procesar otros comandos
-            std::cout << "fd " << fd << " <= " << line << '\n';
-            send_small(fd, ":server NOTICE * :You said: " + line + "\r\n");
-        }
+        else if (line.substr(0,4) == "NICK")
+            tmp_user_->set_nick( trim_msg(line,4));
+        else if (line.substr(0,4) == "USER")
+       {
+            tmp_user_->set_name(trim_msg(line, 4, ' '));
+            line.erase(0,line.find(':'));
+            tmp_user_->set_real_name(trim_msg(line,line.find('\n')));
+       }
     }
+    return 0; 
 }
 
-void Network::authentificate(int fd, std::string &candidate)
-{
-    // Soporta formato PASS <pwd>
-    if (candidate.size() >= 5) 
-    {
-        //limpia string de llegada
-        std::string up = candidate;
-        for (size_t k=0;k < up.size() && k <4 ;++k)
-            up[k] = (char)std::toupper((unsigned char)up[k]);
-        if (up.compare(0,4,"PASS")==0) 
-        {
-            // Quitar "PASS"
-            candidate.erase(0,4);
-            // Trim espacios iniciales
-            while (!candidate.empty() && (candidate[0]==' '||candidate[0]=='\t'))
-                candidate.erase(0,1);
-        }
-    }
-    if (candidate == pass_) //comprueba password server
-    {
-        authed_[fd] = true;
-        tmp_user_->set_authen(true);
-        send_small(fd, ":server NOTICE * :Password OK\r\n");
-        // Aquí podrías continuar con NICK/USER, etc.
-    } 
-    else 
-    {
-        //falllo password envia mensaje y cierra conexion  
-        send_small(fd, ":server NOTICE * :Bad password\r\n");
-        epoll_ctl(epfd_, EPOLL_CTL_DEL, fd, 0);
-        close(fd);
-        inbuf_.erase(fd);
-        authed_.erase(fd);
-        delete tmp_user_;
-        return; // salir de while líneas
-    }
-}
 
 Network::Network(uint16_t port, std::string password):port_ (port), pass_(password)
 {

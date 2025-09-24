@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 09:31:48 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/09/19 12:18:32 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/09/23 11:14:08 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,20 +30,22 @@
 
 #include "users.hpp"
 
-class Network: public User
+class Network
 {
     private:
-    int fd_;
-    int epfd_;
-    uint16_t port_;
-    sockaddr_in addr_;
-    std::string server_ip_;
-    std::string pass_;
+        int fd_;
+        int epfd_;
+        uint16_t port_;
+        sockaddr_in addr_;
+        std::string server_ip_;
+        std::string pass_;
 
-    std::map<int, std::string> inbuf_;
-    std::map<int, bool> authed_;
+        std::map<int, std::string> inbuf_;
+        std::map<int, bool> authed_;
+        std::map<std::string, User> user_list;
+   // std::map<std::string, Chanels>  channels;
 
-    User *tmp_user_;
+        User *tmp_user_;
     
 
     struct Err {
@@ -64,8 +66,9 @@ class Network: public User
         void send_small(int fd, const std::string &msg);
         void new_connection();
         void process_line(int fd, std::string &ib);
-        void authentificate(int fd, std::string &candidate);
+        bool authentificate(int fd, std::string candidate);
         void new_user();
+        void clean_msg(std::string& ib);
     public:
         Network(uint16_t port, std::string password);
         ~Network();
