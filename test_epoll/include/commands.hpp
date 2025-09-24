@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   command.hpp                                        :+:      :+:    :+:   */
+/*   commands.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 09:01:56 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/09/19 12:36:29 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/09/24 10:23:24 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,9 @@ private:
     int commnad_len_ = comands_->length();
 
 public:
-    void commands(std::string &chain, User user);
+    void commands(std::string &msg, User user);
     ~Commands();
 };
+bool auth_user(std::string &msg, User &user, std::string pass);
 
 
