@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 09:00:56 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/09/29 09:13:42 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/09/29 13:14:01 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,6 +172,7 @@ void Network::epoll_run()
                         close(fd);
                         inbuf_.erase(fd);
                         authed_.erase(fd);
+                        user_out(fd);
                         break;
                     } 
                     else 
@@ -255,23 +256,23 @@ void Network::new_connection()
         tmp_user_= new User();
         tmp_user_->set_ip(ip);
         tmp_user_->set_port(c_port);
-        // Mensaje inicial opcional
+        tmp_user_->set_fd(cfd);
         send_small(cfd, ":server NOTICE * :Send password (plain or 'PASS <pwd>')\r\n");
     }
 }
 
 void Network::process_line(int fd, std::string& ib )
 {
-    std::string::size_type first = ib.find('\n');
+    std::string::size_type first = ib.find('\n'); //comprueba que la linea tiene una linea finaliza en \n
     if (first == std::string::npos)
         return;
-    std::string::size_type second = ib.find('\n', first + 1);
+    std::string::size_type second = ib.find('\n', first + 1); //si mas de una linea 
     if (second == std::string::npos && ib.substr(0,3) == "CAP")
         return;
     if (!authed_[fd]) 
     {
         // Password esperado
-        if (authentificate(ib))
+        if (com->authorize(ib,*tmp_user_, pass_, user_list))
         {
             send_small(fd, ":server NOTICE * :Bad password\r\n");
             epoll_ctl(epfd_, EPOLL_CTL_DEL, fd, 0);
@@ -281,24 +282,8 @@ void Network::process_line(int fd, std::string& ib )
             delete tmp_user_;
             return; // salir de while líneas
         }
-        std::map<std::string, User>::iterator it = user_list.find(tmp_user_->get_nick());
-        if (it ==user_list.end())
-        {
-            user_list[tmp_user_->get_nick()].set_authen(tmp_user_->get_authen());
-            user_list[tmp_user_->get_nick()].set_nick(tmp_user_->get_nick());
-            user_list[tmp_user_->get_nick()].set_name(tmp_user_->get_name());
-            user_list[tmp_user_->get_nick()].set_real_name(tmp_user_->get_real_name());
-            user_list[tmp_user_->get_nick()].set_ip(tmp_user_->get_ip());
-            user_list[tmp_user_->get_nick()].set_port(tmp_user_->get_port());
-            std::cout << "New user: " << tmp_user_->get_nick() << " enter on server" << std::endl;
-            authed_[fd] = true;
-        }
-        else 
-        {
-            std::cout << "Existing user: " << tmp_user_->get_nick() << "enter on server" << std::endl;
-            authed_[fd] = true;
-        }
-        send_small(fd, "Wellcome to server " + tmp_user_->get_nick() + "\r\n");
+        authed_[fd] = true;
+        send_small(fd, "Wellcome to server " + tmp_user_->get_nick() + "\r\n"); //se puede personalizar
         delete tmp_user_;
     }
     else 
@@ -341,22 +326,32 @@ void Network::clean_msg(std::string& ib)
    
 }
 
-bool Network::authentificate(std::string msg)
+void Network::user_out(int fd)
 {
+    std::map<std::string, User>::iterator it_start= user_list.begin();
+    std::map<std::string, User>::iterator it_end= user_list.end();
+    for (; it_start != it_end; ++it_start )
+    {
+        if ( it_start->second.get_fd() == fd)
+        {
+            it_start->second.set_fd(0);
+            break;
+        }
+            
+    }
     
-    if (auth_user(msg, *tmp_user_, pass_))
-        return (1);
-    return 0; 
 }
 
 
 Network::Network(uint16_t port, std::string password):port_ (port), pass_(password)
 {
+    com = new Commands();
     server_ip_ = pick_ipv4();  
     setup_socket();
     bind_socket();
     epoll_setup();
     epoll_run();
+    delete com;
 }
 
 Network::~Network(){}

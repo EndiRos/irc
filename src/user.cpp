@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 09:45:28 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/09/24 12:54:18 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/09/29 11:51:54 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,16 @@ std::string User::get_nick()
 {
     return user_.nick;
 }
+
+void User::set_fd(int fd)
+{
+    user_.fd = fd ;
+}
+int User::get_fd()
+{
+    return user_.fd;
+}
+
 bool User::get_authen(){return user_.authen;}
 
 std::string User::get_name() {return user_.name;}

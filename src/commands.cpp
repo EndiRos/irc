@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 09:09:09 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/09/29 10:27:03 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/09/29 13:27:44 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,10 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
     }
 }
 
-bool auth_user(std::string &msg, User &tmp_user_, std::string pass)
+bool Commands::authorize(std::string &msg, User &tmp_user_, std::string pass,std::map<std::string, User> &user_list)
 {   
-    while (std::string::size_type pos = msg.find('\n') != std::string::npos) 
+    std::string::size_type pos = 0;
+    while ( (pos = msg.find('\n')) != std::string::npos) 
     {
         std::string line = msg.substr(0, pos);
         if (!line.empty() && line[line.size()-1] == '\r')
@@ -77,5 +78,28 @@ bool auth_user(std::string &msg, User &tmp_user_, std::string pass)
             tmp_user_.set_real_name(trim_msg(line,line.find('\n')));
        }
     }
+    add_user(tmp_user_, user_list);
     return (0);
+}
+Commands::~Commands(){}
+
+void Commands::add_user(User &tmp_user, std::map<std::string, User> &user_list)
+{
+    std::map<std::string, User>::iterator it = user_list.find(tmp_user.get_nick());
+    if (it ==user_list.end())
+    {
+        user_list[tmp_user.get_nick()].set_authen(tmp_user.get_authen());
+        user_list[tmp_user.get_nick()].set_nick(tmp_user.get_nick());
+        user_list[tmp_user.get_nick()].set_name(tmp_user.get_name());
+        user_list[tmp_user.get_nick()].set_real_name(tmp_user.get_real_name());
+        user_list[tmp_user.get_nick()].set_ip(tmp_user.get_ip());
+        user_list[tmp_user.get_nick()].set_port(tmp_user.get_port());
+        std::cout << "New user: " << tmp_user.get_nick() << " enter on server" << std::endl;
+        
+    }
+    else 
+    {
+        std::cout << "Existing user: " << tmp_user.get_nick() << "enter on server" << std::endl;
+        user_list[tmp_user.get_nick()].set_fd (tmp_user.get_fd());
+    }
 }

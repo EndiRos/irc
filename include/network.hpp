@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 09:31:48 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/09/24 14:08:17 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/09/29 12:45:06 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 
 #include "users.hpp"
 #include "utils.hpp"
+#include "commands.hpp"
 
 class Network
 {
@@ -47,6 +48,8 @@ class Network
    // std::map<std::string, Chanels>  channels;
 
         User *tmp_user_;
+        Commands *com;
+        
     
 
         struct Err {
@@ -82,6 +85,7 @@ class Network
         bool authentificate(std::string candidate);
         void new_user();
         void clean_msg(std::string& ib);
+        void user_out(int fd);
     public:
         Network(uint16_t port, std::string password);
         ~Network();

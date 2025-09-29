@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 10:12:59 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/09/24 12:53:50 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/09/29 11:51:24 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ struct data{
             std::string                 real_name;
             std::string                 ip;
             uint16_t                    port;
+            int                         fd;
 };
        
 class User
@@ -51,6 +52,8 @@ class User
         std::string get_ip();
         uint16_t get_port();
         void rm_channel();
+        void set_fd(int fd);
+        int get_fd();
     
         static  std::map<std::string, data> users;
     
