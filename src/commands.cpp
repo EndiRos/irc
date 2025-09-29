@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 09:09:09 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/09/24 14:12:16 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/09/29 10:27:03 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,29 @@
 #include "users.hpp"
 #include "utils.hpp"
 
-const char* command_names[24] = {
-    "PASS", "NICK", "USER", "QUIT", "PING", "CAP", "PRIVMSG", "NOTICE",
-    "JOIN", "PART", "TOPIC", "NAMES", "LIST", "MODE", "INVITE", "KICK",
-    "WHOIS", "WHO", "ISON", "USERHOST", "AWAY", "OPER", "KILL"
-};
-const int commnad_len_ = 24;
-void Commands::commands(std::string &line, User user) 
+
+Commands::Commands() : commnad_len_(24) {
+    const char* cmds[] = {
+        "PASS", "NICK", "USER", "QUIT", "PING", "CAP", "PRIVMSG", "NOTICE",
+        "JOIN", "PART", "TOPIC", "NAMES", "LIST", "MODE", "INVITE", "KICK",
+        "WHOIS", "WHO", "ISON", "USERHOST", "AWAY", "OPER", "KILL", "KILL"
+    };
+    for (int i = 0; i < commnad_len_; ++i)
+        comands_name_[i] = cmds[i];
+}
+
+void Commands::execute(std::string &msg, User& user, std::map<std::string, User> &user_list, std::map<std::string, User> &channels_list)
 {
     (void)user;
+    (void)user_list;//temporal ya lño usaremos 
+    (void)channels_list;
     std::string::size_type pos = 0;
     std::string::size_type pos2 = 0; 
-    pos2 = line.find(' ');
+    pos2 = msg.find(' ');
     int i = 0;
     for (; i < commnad_len_; i++ )
     {
-        if (line.substr(pos,pos2) == command_names[i])
+        if (msg.substr(pos,pos2) == comands_name_[i])
             break;
     }
     switch (i)
@@ -46,7 +53,6 @@ void Commands::commands(std::string &line, User user)
 
 bool auth_user(std::string &msg, User &tmp_user_, std::string pass)
 {   
-    (void) commnad_len_;
     while (std::string::size_type pos = msg.find('\n') != std::string::npos) 
     {
         std::string line = msg.substr(0, pos);

@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 09:00:56 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/09/24 13:38:00 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/09/29 09:13:42 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -328,13 +328,17 @@ void Network::process_line(int fd, std::string& ib )
 void Network::clean_msg(std::string& ib)
 {
 
-    for (int i = 0; i < 4; i++)
+    if (ib.substr(0,3)== "CAP")
     {
-        std::string::size_type pos = ib.find('\n');
-        if (pos == std::string::npos)
-            break;
-        ib.erase(0,pos + 1);
+        for (int i = 0; i < 4; i++)
+        {
+            std::string::size_type pos = ib.find('\n');
+            if (pos == std::string::npos)
+                break;
+            ib.erase(0,pos + 1);
+        }
     }
+   
 }
 
 bool Network::authentificate(std::string msg)
