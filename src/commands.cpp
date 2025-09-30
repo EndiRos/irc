@@ -25,7 +25,62 @@ Commands::Commands() : commnad_len_(24) {
         comands_name_[i] = cmds[i];
 }
 
-void Commands::execute(std::string &msg, User& user, std::map<std::string, User> &user_list, std::map<std::string, User> &channels_list)
+void mode(std::string &msg, User& user, std::map<std::string, Channel> &channels_list)
+{
+    (void)user;
+	std::string channel = "";
+	bool mode;
+	size_t pos = msg.find('#');
+	pos++;
+	while (msg[pos] != ' ' && msg[pos] != '+' && msg[pos] != '-' && msg[pos])
+	{
+		channel += (char)msg[pos];
+		pos++;
+	}
+	std::cout << channel << std::endl;
+	while (msg[pos] == ' ')
+		pos++;
+	msg.erase(0, pos);
+	pos = 0;
+	while(msg[pos] && msg[pos] != ' ')
+	{
+		std::cout << msg << std::endl;
+		if(msg[pos] == '+')
+		{
+			mode = true;
+			std::cout << "true mode" << std::endl;
+		}
+		else if (msg[pos] == '-')
+		{
+			mode = false;
+			std::cout << "false mode" << std::endl;
+		}
+		switch (msg[pos])
+		{
+			case 'i':
+				execute_i(mode, channels_list[channel]);
+				break;
+			case 't':
+				execute_t(mode, channels_list[channel]);
+				break;
+			case 'k':
+				execute_k(msg, mode, channels_list[channel]);
+				break;
+			case 'o':
+				execute_o(msg, mode, channels_list[channel]);
+				break;
+			case 'l':
+				execute_l(msg, mode, channels_list[channel]);
+				break;
+			default:
+				break ;
+		}
+		msg.erase(0,1);
+	}
+}
+
+
+void Commands::execute(std::string &msg, User& user, std::map<std::string, User> &user_list, std::map<std::string, Channel> &channels_list)
 {
     (void)user;
     (void)user_list;//temporal ya lño usaremos 
@@ -45,6 +100,9 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
         break;
     case 1:
         //nick(line, user);
+        break;
+    case 13:
+        mode(msg, user, channels_list);
         break;
     default:
         break;

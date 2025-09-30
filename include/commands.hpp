@@ -14,6 +14,7 @@
 #include <string>
 #include<iostream>
 #include "users.hpp"
+#include "channel.hpp"
 
 
 class Commands: public User
@@ -25,7 +26,7 @@ private:
 public:
     Commands();
     ~Commands();
-    void execute(std::string &msg, User& user, std::map<std::string, User> &user_list, std::map<std::string, User> &channels_list);
+    void execute(std::string &msg, User& user, std::map<std::string, User> &user_list, std::map<std::string, Channel> &channels_list);
     bool authorize(std::string &msg, User &tmp_user_, std::string pass, std::map<std::string, User> &user_list);
     void add_user(User &user, std::map<std::string, User> &user_list);
 };
