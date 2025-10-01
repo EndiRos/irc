@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 09:09:09 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/09/29 13:27:44 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/01 11:36:07 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,6 @@ void mode(std::string &msg, User& user, std::map<std::string, Channel> &channels
 
 void Commands::execute(std::string &msg, User& user, std::map<std::string, User> &user_list, std::map<std::string, Channel> &channels_list)
 {
-    (void)user;
     (void)user_list;//temporal ya lño usaremos 
     (void)channels_list;
     std::string::size_type pos = 0;

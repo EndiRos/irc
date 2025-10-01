@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 09:00:56 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/09/29 13:14:01 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/09/30 12:11:25 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -288,6 +288,9 @@ void Network::process_line(int fd, std::string& ib )
     }
     else 
     {
+        User us;
+        us = 
+        com->execute(ib, find_user_by_fd(fd), user_list, channel_list); 
         //aqui viene la busqueda de comandos, ejecutarlos  
         // Ya autenticado: procesar otros comandos
         std::string look = ib;
@@ -310,35 +313,30 @@ void Network::process_line(int fd, std::string& ib )
     }
         
     }
-void Network::clean_msg(std::string& ib)
-{
 
-    if (ib.substr(0,3)== "CAP")
+    User Network::find_user_by_fd(int fd) const
     {
-        for (int i = 0; i < 4; i++)
+        std::map<std::string, User>::const_iterator it = user_list.begin();
+        std::map<std::string, User>::const_iterator end = user_list.end();
+        for (; it != end; ++it) {
+        if (it->second.get_fd() == fd)
+            return it->second;
+        }
+        return User();
+    }
+
+    void Network::user_out(int fd)
+    {
+        std::map<std::string, User>::iterator it_start = user_list.begin();
+        std::map<std::string, User>::iterator it_end = user_list.end();
+        for (; it_start != it_end; ++it_start)
         {
-            std::string::size_type pos = ib.find('\n');
-            if (pos == std::string::npos)
+            if (it_start->second.get_fd() == fd)
+            {
+                it_start->second.set_fd(0);
                 break;
-            ib.erase(0,pos + 1);
+            }
         }
-    }
-   
-}
-
-void Network::user_out(int fd)
-{
-    std::map<std::string, User>::iterator it_start= user_list.begin();
-    std::map<std::string, User>::iterator it_end= user_list.end();
-    for (; it_start != it_end; ++it_start )
-    {
-        if ( it_start->second.get_fd() == fd)
-        {
-            it_start->second.set_fd(0);
-            break;
-        }
-            
-    }
     
 }
 
