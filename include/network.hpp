@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 09:31:48 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/09/30 12:12:09 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/01 10:44:30 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ class Network
         std::map<int, std::string> inbuf_;
         std::map<int, bool> authed_;
         std::map<std::string, User> user_list;
-        std::map<std::string, Chanels>  channels;
+        std::map<std::string, Chanel>  channels;
 
         User *tmp_user_;
         Commands *com;
