@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 09:31:48 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/09/29 12:45:06 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/09/30 12:12:09 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 #include <netdb.h>
 #include <map>
 #include <stdlib.h>
+#include <sstream>
 
 #include "users.hpp"
 #include "utils.hpp"
@@ -45,31 +46,19 @@ class Network
         std::map<int, std::string> inbuf_;
         std::map<int, bool> authed_;
         std::map<std::string, User> user_list;
-   // std::map<std::string, Chanels>  channels;
+        std::map<std::string, Chanels>  channels;
 
         User *tmp_user_;
         Commands *com;
         
-    
-
-        struct Err {
+            struct Err {
             static std::runtime_error make(const char *msg, int e) {
                 std::string s(msg);
                 if (e) {
-                    std::string num;
-                    int n = e;
-                    if (n == 0)
-                        num = "0";
-                    else {
-                        bool neg = false;
-                        if (n < 0) { neg = true; n = -n; }
-                        while (n > 0) {
-                            num.insert(num.begin(), '0' + (n % 10));
-                            n /= 10;
-                        }
-                        if (neg) num.insert(num.begin(), '-');
-}
-                    s += num;
+                   
+                    std::ostringstream num;
+                    num<<e;
+                    s += num.str();
                 }
                 return std::runtime_error(s);
             }
@@ -84,7 +73,7 @@ class Network
         void process_line(int fd, std::string &ib);
         bool authentificate(std::string candidate);
         void new_user();
-        void clean_msg(std::string& ib);
+        User find_user_by_fd(int fd) const;
         void user_out(int fd);
     public:
         Network(uint16_t port, std::string password);

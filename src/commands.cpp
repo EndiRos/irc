@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 09:09:09 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/09/29 13:27:44 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/09/30 12:15:12 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,8 @@ Commands::Commands() : commnad_len_(24) {
         comands_name_[i] = cmds[i];
 }
 
-void Commands::execute(std::string &msg, User& user, std::map<std::string, User> &user_list, std::map<std::string, User> &channels_list)
+bool Commands::execute(std::string &msg, int fd, std::map<std::string, User> &user_list, std::map<std::string, Channel> &channels_list)
 {
-    (void)user;
     (void)user_list;//temporal ya lño usaremos 
     (void)channels_list;
     std::string::size_type pos = 0;

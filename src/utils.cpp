@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 10:14:26 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/09/29 09:09:29 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/09/30 10:42:23 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,4 +36,20 @@ bool is_valid_port(const char* str) {
     int port = atoi(str);
     // Verifica rango de puerto válido
     return port >= 1 && port <= 65535;
+}
+
+void clean_msg(std::string& ib)
+{
+
+    if (ib.substr(0,3)== "CAP")
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            std::string::size_type pos = ib.find('\n');
+            if (pos == std::string::npos)
+                break;
+            ib.erase(0,pos + 1);
+        }
+    }
+   
 }
