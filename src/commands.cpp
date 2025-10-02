@@ -6,13 +6,14 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 09:09:09 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/01 11:36:07 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/02 12:37:34 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "commands.hpp"
 #include "users.hpp"
 #include "utils.hpp"
+#include <unistd.h>
 
 
 Commands::Commands() : commnad_len_(24) {
@@ -25,7 +26,7 @@ Commands::Commands() : commnad_len_(24) {
         comands_name_[i] = cmds[i];
 }
 
-void mode(std::string &msg, User& user, std::map<std::string, Channel> &channels_list)
+std::string mode(std::string &msg, User& user, std::map<std::string, Channel> &channels_list)
 {
     (void)user;
 	std::string channel = "";
@@ -42,6 +43,7 @@ void mode(std::string &msg, User& user, std::map<std::string, Channel> &channels
 		pos++;
 	msg.erase(0, pos);
 	pos = 0;
+    std::string res;
 	while(msg[pos] && msg[pos] != ' ')
 	{
 		std::cout << msg << std::endl;
@@ -58,25 +60,26 @@ void mode(std::string &msg, User& user, std::map<std::string, Channel> &channels
 		switch (msg[pos])
 		{
 			case 'i':
-				execute_i(mode, channels_list[channel]);
+				res += execute_i(mode, channels_list[channel]);
 				break;
 			case 't':
-				execute_t(mode, channels_list[channel]);
+				res += execute_t(mode, channels_list[channel]);
 				break;
 			case 'k':
-				execute_k(msg, mode, channels_list[channel]);
+				res += execute_k(msg, mode, channels_list[channel]);
 				break;
 			case 'o':
-				execute_o(msg, mode, channels_list[channel]);
+				res += execute_o(msg, mode, channels_list[channel]);
 				break;
 			case 'l':
-				execute_l(msg, mode, channels_list[channel]);
+				res += execute_l(msg, mode, channels_list[channel]);
 				break;
 			default:
 				break ;
 		}
 		msg.erase(0,1);
 	}
+    return res;
 }
 
 
@@ -85,9 +88,11 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
     (void)user_list;//temporal ya lño usaremos 
     (void)channels_list;
     std::string::size_type pos = 0;
-    std::string::size_type pos2 = 0; 
+    std::string::size_type pos2 = 0;
+    std::string channel = extract_channel(msg);
     pos2 = msg.find(' ');
     int i = 0;
+    std::string res;
     for (; i < commnad_len_; i++ )
     {
         if (msg.substr(pos,pos2) == comands_name_[i])
@@ -101,11 +106,19 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
         //nick(line, user);
         break;
     case 13:
-        mode(msg, user, channels_list);
+        res = mode(msg, user, channels_list);
+        break;
+    case 8:
+        res = join(msg,user,channels_list);
         break;
     default:
         break;
     }
+    if (res.find("Error:") != 0)
+        send_to_one(user.get_fd(), res);
+    else
+        send_to_one(user.get_fd(), res);
+    return;
 }
 
 bool Commands::authorize(std::string &msg, User &tmp_user_, std::string pass,std::map<std::string, User> &user_list)
@@ -159,4 +172,9 @@ void Commands::add_user(User &tmp_user, std::map<std::string, User> &user_list)
         std::cout << "Existing user: " << tmp_user.get_nick() << "enter on server" << std::endl;
         user_list[tmp_user.get_nick()].set_fd (tmp_user.get_fd());
     }
+}
+
+void Commands::send_to_one(int fd, std::string msg)
+{
+    write (fd,msg.c_str(),msg.size());
 }

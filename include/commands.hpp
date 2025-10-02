@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 09:01:56 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/01 11:36:25 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/02 11:13:07 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,5 +29,6 @@ public:
     void execute(std::string &msg, User& user, std::map<std::string, User> &user_list, std::map<std::string, Channel> &channels_list);
     bool authorize(std::string &msg, User &tmp_user_, std::string pass, std::map<std::string, User> &user_list);
     void add_user(User &user, std::map<std::string, User> &user_list);
+    void send_to_one(int fd, std::string res);
 };
 

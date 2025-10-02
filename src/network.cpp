@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 09:00:56 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/09/30 12:11:25 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/01 13:52:51 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,6 +263,7 @@ void Network::new_connection()
 
 void Network::process_line(int fd, std::string& ib )
 {
+    std::string res;
     std::string::size_type first = ib.find('\n'); //comprueba que la linea tiene una linea finaliza en \n
     if (first == std::string::npos)
         return;
@@ -288,36 +289,19 @@ void Network::process_line(int fd, std::string& ib )
     }
     else 
     {
-        User us;
-        us = 
-        com->execute(ib, find_user_by_fd(fd), user_list, channel_list); 
-        //aqui viene la busqueda de comandos, ejecutarlos  
-        // Ya autenticado: procesar otros comandos
+        User user = find_user_by_fd(fd);
+        com->execute(ib,user, user_list, channels); 
         std::string look = ib;
         clean_msg(look);
-        std::cout << look.substr(0,4) <<std::endl;
-        if (look.substr(0,4) == "JOIN")
-        {
-            std::string msg = ":enetxeba!enetxeba@127.0.0.1 JOIN :#canal\r\n\
-                            :server 353 enetxeba = #canal :juan\r\n\
-                            :server 366 enetxeba #canal :End of /NAMES list.\r\n";
-            send_small(fd,msg);
-           return;
-        }
-        else 
-        {
-            std::cout << "fd " << fd << " <= " << ib << '\n';
-            send_small(fd, ":server NOTICE * :You said: " + ib + "\r\n");
-            return;
-        }
+        
     }
         
     }
 
-    User Network::find_user_by_fd(int fd) const
+    User Network::find_user_by_fd(int fd)
     {
-        std::map<std::string, User>::const_iterator it = user_list.begin();
-        std::map<std::string, User>::const_iterator end = user_list.end();
+        std::map<std::string, User>::iterator it = user_list.begin();
+        std::map<std::string, User>::iterator end = user_list.end();
         for (; it != end; ++it) {
         if (it->second.get_fd() == fd)
             return it->second;

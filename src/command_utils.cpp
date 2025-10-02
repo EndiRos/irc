@@ -2,6 +2,19 @@
 #include "channel.hpp"
 #include <cstdlib>
 
+
+std::string extract_channel(std::string msg)
+{
+    std::string channel;
+    size_t pos = msg.find('#');
+	pos++;
+	while (msg[pos] != ' ' && msg[pos] != '+' && msg[pos] != '-' && msg[pos])
+	{
+		channel += (char)msg[pos];
+		pos++;
+	}
+    return channel;
+}
 std::string find_param_k(std::string &msg)
 {
 	std::cout << "finding k command param: " << std::endl;
@@ -87,42 +100,42 @@ std::string find_param_l(std::string& msg)
     return "";
 }
 
-bool execute_i(bool mode, Channel &my_channel)
+std::string execute_i(bool mode, Channel &my_channel)
 {
 	std::cout << "execute i" << std::endl;
 	my_channel.invite_f = mode;
-	return true;
+	return mode ? "Now the channel need invitation\n" : "Now channel is open\n";
 }
 
-bool execute_t(bool mode, Channel &my_channel)
+std::string execute_t(bool mode, Channel &my_channel)
 {
 	std::cout << "execute t" << std::endl;
 	my_channel.topic_f = mode;
-	return true;
+	return mode ? "Now the topic is editable\n" : "Now the topic is not editable\n";
 }
 
-bool execute_k(std::string &msg, bool mode, Channel &my_channel)
+std::string execute_k(std::string &msg, bool mode, Channel &my_channel)
 {
 	if (!mode)
 	{
 		my_channel.key_f = mode;
-		return true;
+		return "Now the pass is not needed\n";
 	}
 	else
 	{
 		std::string result = find_param_k(msg);
 		if (result == "")
-			return false;
+			return "there is not in a database, u need to defin one";
 		else
 		{
 			my_channel.key_f = mode;
 			my_channel.key = result;
-			return true;
+			return "Now the channel is protected by password";
 		}
 	}
 }
 
-bool execute_o(std::string &msg, bool mode, Channel &my_channel)
+std::string  execute_o(std::string &msg, bool mode, Channel &my_channel)
 {
 	std::string user = find_param_o(msg);
 	if (user != "" && mode)
@@ -130,25 +143,35 @@ bool execute_o(std::string &msg, bool mode, Channel &my_channel)
 		std::map<std::string, User>::iterator it = my_channel.users.find(user);
 		if (it != my_channel.users.end())
 			my_channel.operators.insert(*it);
-		return true;
+		return "Now" + user + " is op";
 	}
 	if (user != "" && !mode)
 	{
 		std::map<std::string, User>::iterator it = my_channel.operators.find(user);
 		if (it != my_channel.operators.end())
 			my_channel.operators.erase(user);
-		return true;
+		return "Now" + user + " is no longer an op";
 	}
-	return false;
+	return "Error: you must insert user name";
 }
 
-bool execute_l(std::string &msg, bool mode, Channel &my_channel)
+std::string execute_l(std::string &msg, bool mode, Channel &my_channel)
 {
     (void)my_channel;
 	std::string result;
 	if (mode)
-		result = find_param_l(msg);
+	{
+        result = find_param_l(msg);
+        my_channel.user_limit = atoi(result.c_str());
+        my_channel.limit_f = true;
+        return "Now the limit of user is " + result;
+    }
+    else{
+        my_channel.limit_f = false;
+        return "There is not limit of user";
+    }
+
 	if (result != "")
 		std::cout << result << std::endl;
-	return true;
+	return "Error: you must give a param";
 }
