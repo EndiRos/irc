@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
+/*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 09:09:09 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/02 12:37:34 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/02 13:21:55 by imugica-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ Commands::Commands() : commnad_len_(24) {
     for (int i = 0; i < commnad_len_; ++i)
         comands_name_[i] = cmds[i];
 }
+
+
 
 std::string mode(std::string &msg, User& user, std::map<std::string, Channel> &channels_list)
 {
@@ -107,6 +109,9 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
         break;
     case 13:
         res = mode(msg, user, channels_list);
+        break;
+    case 14:
+        res = invite(msg, user, channels_list, user_list);
         break;
     case 8:
         res = join(msg,user,channels_list);

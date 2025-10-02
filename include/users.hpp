@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   users.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
+/*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 10:12:59 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/09/29 11:51:24 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/02 13:31:57 by imugica-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ struct data{
             std::string                 ip;
             uint16_t                    port;
             int                         fd;
+            std::vector<std::string>    invited_list;
 };
        
 class User
@@ -45,6 +46,7 @@ class User
         void set_port(uint16_t port);
         void add_channel(std::string);
         void add_user();
+        void add_invite(std::string channel_name);
         bool get_authen();
         std::string get_nick();
         std::string get_name();
