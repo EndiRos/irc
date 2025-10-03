@@ -1,14 +1,11 @@
 #include <iostream>
 #include "users.hpp"
 #include "channel.hpp"
+#include "msg.hpp"
 
-std::string topic(std::string &msg, User& user, std::map<std::string, Channel> &channels_list, std::map<std::string, User> &user_list)
+msg_ topic(std::string &msg, User& user, std::map<std::string, Channel> &channels_list, std::map<std::string, User> &user_list)
 {
-	(void)user;
-	(void)user_list;
-    //check if the channel exists
-    //cheeck if the inivite command has a paramater, if not just print topic, else change topic if the flag is correct
-    std::string res;
+    msg_ res;
     size_t pos = msg.find('#');
     size_t pos2 = msg.find(' ', pos);
     std::string channel_name;
@@ -16,23 +13,21 @@ std::string topic(std::string &msg, User& user, std::map<std::string, Channel> &
         channel_name = msg.substr(msg.find('#') + 1, pos2);
     else
         channel_name = msg.substr(msg.find('#') + 1, msg.size());
-
     std::map<std::string,Channel>::iterator it=channels_list.find(channel_name);
     if (it != channels_list.end())
     {
 		if(channels_list[channel_name].topic_f)
-        {
-			res += "No se puede cambiar el topic!";
-        }
+			res.user = ":server 403"+user.get_nick()+" #"+channel_name+" :Can not change the topic"+ "\r\n";
 		else if (pos2 != std::string::npos)
-		{
-			res += channels_list[channel_name].topic;
-		}
+			res.user = ":server 332 "+user.get_nick()+" #"+channel_name+" :"+channels_list[channel_name].topic+"\r\n";
 		else
 		{
 			channels_list[channel_name].topic = msg.substr(pos2 + 1, msg.size());
-			res += "Topic cambiado";
+			res.all_user = ":"+user.get_nick()+"!"+user.get_name()+"@"+user.get_ip()+" TOPIC "+"#"+channel_name +" :"+ channels_list[channel_name].topic+"\r\n";
+			res.channel = channel_name;
 		}
     }
+	else
+		res.user = ":server 403"+user.get_nick()+" #"+channel_name+" :No such channel"+ "\r\n";
     return res;
 }
