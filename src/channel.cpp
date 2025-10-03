@@ -40,3 +40,16 @@ void Channel::remove_operator(User &old_ope)
 {
 	operators.erase(old_ope.get_nick());
 }
+
+std::string extract_channel(std::string msg)
+{
+    std::string channel;
+    size_t pos = msg.find('#');
+	pos++;
+	while (msg[pos] != ' ' && msg[pos] != '+' && msg[pos] != '-' && msg[pos])
+	{
+		channel += (char)msg[pos];
+		pos++;
+	}
+    return channel;
+}
