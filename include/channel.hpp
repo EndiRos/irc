@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   channel.hpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/03 10:34:04 by enetxeba          #+#    #+#             */
+/*   Updated: 2025/10/03 10:36:31 by enetxeba         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #pragma once
 #include "users.hpp"
 #include <map>
@@ -25,3 +37,5 @@ class Channel
 		std::map<std::string, User> users;
 		std::map<std::string, User> operators;
 };
+
+std::string extract_channel(std::string msg);

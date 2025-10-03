@@ -1,22 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.hpp                                          :+:      :+:    :+:   */
+/*   msg.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/24 10:12:57 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/03 11:05:09 by imugica-         ###   ########.fr       */
+/*   Created: 2025/10/03 10:30:33 by enetxeba          #+#    #+#             */
+/*   Updated: 2025/10/03 10:33:19 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 #include <string>
-#include "channel.hpp"
-#include "commands.hpp"
 
-std::string trim_msg(std::string line, int lenght,char cha = '\n', int init = 0);
-void my_memset(void* ptr, int value, size_t num);
-bool is_valid_port(const char* str);
-void clean_msg(std::string& ib);
-
+typedef struct msg_
+{
+    std::string user;
+    std::string all_user;
+    std::string channel;
+} msg_;

@@ -1,6 +1,7 @@
 CXX= c++
 FLAGSXX= -Wall -Wextra -Werror -std=c++98 -glldb
-SRC = src/user.cpp src/topic.cpp src/invite.cpp src/commands.cpp src/utils.cpp src/network.cpp src/main.cpp src/command_utils.cpp src/channel.cpp
+SRC = src/user.cpp src/commands.cpp src/utils.cpp src/network.cpp src/main.cpp src/command_utils.cpp\
+ src/channel.cpp src/join.cpp src/mode.cpp
 OBJ = $(SRCSRC:.cpp=.o)
 INCLUDE = -Iinclude
 NAME = irc

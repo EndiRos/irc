@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 09:00:56 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/01 13:52:51 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/02 14:35:11 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -301,10 +301,10 @@ void Network::process_line(int fd, std::string& ib )
     User Network::find_user_by_fd(int fd)
     {
         std::map<std::string, User>::iterator it = user_list.begin();
-        std::map<std::string, User>::iterator end = user_list.end();
-        for (; it != end; ++it) {
+       ;
+        for (; it != user_list.end(); ++it) {
         if (it->second.get_fd() == fd)
-            return it->second;
+            return user_list[it->second.get_nick()];
         }
         return User();
     }

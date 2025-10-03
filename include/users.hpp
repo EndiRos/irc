@@ -6,7 +6,7 @@
 /*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 10:12:59 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/02 13:31:57 by imugica-         ###   ########.fr       */
+/*   Updated: 2025/10/03 11:04:46 by imugica-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ class User
     public:    
         User();
         ~User();
+        User& operator = (const User& other);
         void set_nick(std::string nick);
         void set_authen(bool act);
         void set_name(std::string name);
@@ -47,15 +48,15 @@ class User
         void add_channel(std::string);
         void add_user();
         void add_invite(std::string channel_name);
-        bool get_authen();
-        std::string get_nick();
-        std::string get_name();
-        std::string get_real_name();
-        std::string get_ip();
-        uint16_t get_port();
+        bool get_authen()const ;
+        std::string get_nick() const ;
+        std::string get_name()const ;
+        std::string get_real_name() const;
+        std::string get_ip()  const;
+        uint16_t get_port()const;
         void rm_channel();
         void set_fd(int fd);
-        int get_fd();
+        int get_fd() const;
     
         static  std::map<std::string, data> users;
     
