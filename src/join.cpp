@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 10:07:08 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/03 10:20:52 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/03 12:06:10 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@ msg_ join_chanel(std::string msg, User &user, std::map<std::string,Channel> &cha
         Channel tmp_chan(user,re_channel);
         tmp_chan.add_operators(user);
         channels[re_channel]=tmp_chan;
-        res.user = ":"+ user.get_nick() + "@" + user.get_ip() + " JOIN :" + re_channel + "\r\n" ;
-        res.user += ":server 353 "+ user.get_nick() + " = #" + re_channel +" :" + user.get_nick() + "\r\n" ;
-        res.user += ":server 366 "+ user.get_nick() + " #" + re_channel +" :End of /NAMES list.\r\n" ;
+        res.user = ":" + user.get_nick() + "!" + user.get_name() + "@" + user.get_ip() + " JOIN :" + re_channel + "\r\n";
+        res.user += ":server 353 " + user.get_nick() + " = " + re_channel + " :" + user.get_nick() + "\r\n";
+        res.user += ":server 366 " + user.get_nick() + " " + re_channel + " :End of /NAMES list.\r\n";
     }
     return res;
 }

@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 09:31:48 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/01 12:00:41 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/03 12:33:00 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@
 #include "utils.hpp"
 #include "commands.hpp"
 #include "channel.hpp"
+#include "quit.hpp"
+#include "msg.hpp"
 
 class Network
 {
@@ -69,7 +71,6 @@ class Network
         void bind_socket();
         void epoll_setup();
         void epoll_run();
-        void send_small(int fd, const std::string &msg);
         void new_connection();
         void process_line(int fd, std::string &ib);
         bool authentificate(std::string candidate);
