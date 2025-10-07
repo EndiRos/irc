@@ -5,6 +5,8 @@
 
 msg_  kick(std::string &msg, User& user, std::map<std::string, Channel> &channels_list, std::map<std::string, User> &user_list)
 {
+	(void)user;
+	(void)user_list;
 	msg_ res;
 	size_t pos = msg.find('#') + 1;
 	size_t pos2 = msg.find(':') + 1;

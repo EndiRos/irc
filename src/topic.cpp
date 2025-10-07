@@ -5,6 +5,7 @@
 
 msg_ topic(std::string &msg, User& user, std::map<std::string, Channel> &channels_list, std::map<std::string, User> &user_list)
 {
+    (void)user_list;
     msg_ res;
     size_t pos = msg.find('#');
     size_t pos2 = msg.find(' ', pos);

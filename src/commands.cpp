@@ -6,7 +6,7 @@
 /*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 09:09:09 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/03 11:05:47 by imugica-         ###   ########.fr       */
+/*   Updated: 2025/10/07 11:02:48 by imugica-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,9 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
         break;
     case 13:
         res = mode(msg, user, channels_list,res);
+        break;
+    case 15:
+        res = kick(msg, user, channels_list,user_list);
         break;
     case 8:
         res = join_chanel(msg,user,channels_list);
