@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 09:00:56 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/02 14:35:11 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/07 10:56:48 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,17 @@
 #include "network.hpp"
 #include "users.hpp"
 #include "commands.hpp"
+#include <ctime>
+#include <iomanip>
+#include <iostream>
+
+
+void print_log(const std::string& msg) {
+    std::time_t now = std::time(0);
+    char buf[32];
+    std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", std::localtime(&now));
+    std::cout << "[" << buf << "] " << msg << std::endl;
+}
 
     
 void Network::setup_socket()
@@ -122,7 +133,7 @@ void Network::epoll_setup()
         close(epfd_);
         return ;
     }
-    std::cout << "Listening on " << server_ip_ <<  " : "<< port_ << std::endl;
+    //std::cout << "Listening on " << server_ip_ <<  " : "<< port_ << std::endl;
 }
 
 void Network::epoll_run() 
@@ -167,7 +178,9 @@ void Network::epoll_run()
                     } 
                     else if (r == 0) 
                     {
-                        std::cout << "close client fd = " << fd << '\n';
+                        //msg_ res = quit(*tmp_user_, user_list);
+                        //Commands::send_to_one(fd,res);
+                        //std::cout << "close client fd = " << fd << '\n';
                         epoll_ctl(epfd_, EPOLL_CTL_DEL, fd, 0);
                         close(fd);
                         inbuf_.erase(fd);
@@ -181,11 +194,13 @@ void Network::epoll_run()
                         if (errno == EAGAIN || errno == EWOULDBLOCK) break;
                         std::cerr << "read failed fd=" << fd << ": " ": error code " << errno << '\n';
                         epoll_ctl(epfd_, EPOLL_CTL_DEL, fd, 0);
+                        //Commands::send_to_all(fd,channels,tmp_user_,user_list, res);
                         close(fd);
                         inbuf_.erase(fd);
                         authed_.erase(fd);
                         break;
                     }
+                    print_log(inbuf_[fd]);
                     process_line(fd, inbuf_[fd]);
                     inbuf_[fd].clear();
                     // Procesar líneas completas
@@ -202,20 +217,6 @@ void Network::epoll_run()
         }
 }
 
-    
-void Network::send_small(int fd, const std::string &msg) {
-        const char *p = msg.c_str();
-        size_t left = msg.size();
-        while (left) {
-            ssize_t w = write(fd, p, left);
-            if (w > 0) { left -= (size_t)w; p += w; }
-            else {
-                if (w == -1 && (errno == EINTR)) continue;
-                // Si EAGAIN dejamos el resto (mensaje corto normalmente cabe)
-                break;
-            }
-        }
-    }
 
 void Network::new_connection()
 {
@@ -250,20 +251,21 @@ void Network::new_connection()
             close(cfd);
             throw Err::make("epoll_ctl ADD client failed", e);
         }
-        std::cout << "new client fd=" << cfd << " [" << ip << ":" << c_port << "]\n";
+        //std::cout << "new client fd=" << cfd << " [" << ip << ":" << c_port << "]\n";
         inbuf_[cfd] = "";
         authed_[cfd] = false;
         tmp_user_= new User();
         tmp_user_->set_ip(ip);
         tmp_user_->set_port(c_port);
         tmp_user_->set_fd(cfd);
-        send_small(cfd, ":server NOTICE * :Send password (plain or 'PASS <pwd>')\r\n");
+        //send_small(cfd, ":server NOTICE * :Send password (plain or 'PASS <pwd>')\r\n");
     }
 }
 
 void Network::process_line(int fd, std::string& ib )
 {
     std::string res;
+    //std::cout << ib << std::endl;
     std::string::size_type first = ib.find('\n'); //comprueba que la linea tiene una linea finaliza en \n
     if (first == std::string::npos)
         return;
@@ -275,7 +277,9 @@ void Network::process_line(int fd, std::string& ib )
         // Password esperado
         if (com->authorize(ib,*tmp_user_, pass_, user_list))
         {
-            send_small(fd, ":server NOTICE * :Bad password\r\n");
+            msg_ res;
+            res.user = ":server NOTICE * :Bad password\r\n";
+            Commands::send_to_one(fd,res);
             epoll_ctl(epfd_, EPOLL_CTL_DEL, fd, 0);
             close(fd);
             inbuf_.erase(fd);
@@ -284,7 +288,9 @@ void Network::process_line(int fd, std::string& ib )
             return; // salir de while líneas
         }
         authed_[fd] = true;
-        send_small(fd, "Wellcome to server " + tmp_user_->get_nick() + "\r\n"); //se puede personalizar
+        msg_ res;
+        res.user = "Wellcome to server " + tmp_user_->get_nick() + "\r\n";
+        Commands::send_to_one(fd,res);  //se puede personalizar
         delete tmp_user_;
     }
     else 
@@ -293,7 +299,6 @@ void Network::process_line(int fd, std::string& ib )
         com->execute(ib,user, user_list, channels); 
         std::string look = ib;
         clean_msg(look);
-        
     }
         
     }
@@ -337,5 +342,5 @@ Network::Network(uint16_t port, std::string password):port_ (port), pass_(passwo
 }
 
 Network::~Network(){}
-    
+
 

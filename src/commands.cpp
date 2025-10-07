@@ -6,7 +6,7 @@
 /*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 09:09:09 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/07 11:02:48 by imugica-         ###   ########.fr       */
+/*   Updated: 2025/10/07 11:54:32 by imugica-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,9 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
         break;
     case 1:
         //nick(line, user);
+        break;
+    case 3:
+        res = quit(user, user_list);
         break;
     case 13:
         res = mode(msg, user, channels_list,res);
@@ -91,6 +94,8 @@ bool Commands::authorize(std::string &msg, User &tmp_user_, std::string pass,std
             tmp_user_.set_real_name(trim_msg(line,line.find('\n')));
        }
     }
+    if (tmp_user_.get_nick() == "")
+        return(1);
     add_user(tmp_user_, user_list);
     return (0);
 }
