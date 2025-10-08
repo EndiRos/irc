@@ -6,7 +6,7 @@
 /*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 09:45:28 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/03 11:06:08 by imugica-         ###   ########.fr       */
+/*   Updated: 2025/10/08 11:12:44 by imugica-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void User::set_name(std::string name)
 }
 void User::set_real_name(std::string name)
 {
-	user_.name = name;
+	user_.real_name = name;
 }
 void User::set_ip(std::string ip)
 {
