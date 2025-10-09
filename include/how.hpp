@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   join.hpp                                           :+:      :+:    :+:   */
+/*   how.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/03 10:08:07 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/09 11:32:13 by enetxeba         ###   ########.fr       */
+/*   Created: 2025/10/07 14:01:26 by enetxeba          #+#    #+#             */
+/*   Updated: 2025/10/07 14:01:47 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,4 @@
 #include "users.hpp"
 #include "commands.hpp"
 
-
-void join_chanel(std::string msg, User &user, std::map<std::string,Channel> &channels);
-void refresh_users(std::map<std::string,Channel> &channels, std::string channel);
+msg_ how(std::string msg, User &user, std::map<std::string,Channel> &channels);

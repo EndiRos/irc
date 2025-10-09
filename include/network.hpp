@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 09:31:48 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/03 12:33:00 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/09 11:49:19 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@
 #include "utils.hpp"
 #include "commands.hpp"
 #include "channel.hpp"
+#include "quit.hpp"
+#include "msg.hpp"
 #include "quit.hpp"
 #include "msg.hpp"
 
@@ -77,6 +79,7 @@ class Network
         void new_user();
         User find_user_by_fd(int fd);
         void user_out(int fd);
+        bool verify_cap(int fd, std::string& ib);
     public:
         Network(uint16_t port, std::string password);
         ~Network();

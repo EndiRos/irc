@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   join.cpp                                           :+:      :+:    :+:   */
+/*   how.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 10:07:08 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/09 11:49:44 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/07 14:01:00 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "join.hpp"
 
-void join_chanel(std::string msg, User &user, std::map<std::string,Channel> &channels)
+msg_ how(std::string msg, User &user, std::map<std::string,Channel> &channels)
 {
     std::string::size_type pos =  msg.find(' ') + 1;
     std::string::size_type pos2 = msg.find('\r',pos);
@@ -20,20 +20,10 @@ void join_chanel(std::string msg, User &user, std::map<std::string,Channel> &cha
     std::map<std::string,Channel>::iterator it=channels.find(re_channel);
     msg_ res;
     if (it==channels.end())
-    {
-        Channel tmp_chan(user,re_channel);
-        tmp_chan.add_operators(user);
-        channels[re_channel]=tmp_chan;
-        res.user = ":" + user.get_nick() + "!" + user.get_name() + "@" + user.get_ip() + " JOIN :" + re_channel + "\r\n";
-        Commands::send_to_one(user.get_fd(),res);
-    }
-    else
-    {
-        channels[re_channel].add_user(user);
-        res.user = ":" + user.get_nick() + "!" + user.get_name() + "@" + user.get_ip() + " JOIN :" + re_channel + "\r\n";
-        Commands::send_to_one(user.get_fd(),res);
-    }
-    Commands::refresh_users(channels, re_channel);
-    return;
+        return res;
+    res.user += ":server 353 " + user.get_nick() + " = " + re_channel + " :" + channels[re_channel].user_list() + "\r\n";
+    res.user += ":server 366 " + user.get_nick() + " " + re_channel + " :End of /NAMES list.\r\n";
+    return res;
 }
+
 
