@@ -5,10 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/19 09:09:09 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/09 11:44:16 by enetxeba         ###   ########.fr       */
+/*   Created: Invalid date        by                   #+#    #+#             */
+/*   Updated: 2025/10/09 11:49:32 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "commands.hpp"
 
@@ -44,6 +45,9 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
         break;
     case 1:
         //nick(line, user);
+        break;
+    case 3:
+        res = quit(user, user_list);
         break;
     case 3:
         res = quit(user, user_list);
@@ -93,6 +97,8 @@ bool Commands::authorize(std::string &msg, User &tmp_user_, std::string pass,std
             tmp_user_.set_real_name(trim_msg(line,line.find('\n')));
        }
     }
+    if (tmp_user_.get_nick() == "")
+        return(1);
     if (tmp_user_.get_nick() == "")
         return(1);
     add_user(tmp_user_, user_list);

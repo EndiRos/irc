@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 09:31:48 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/07 12:18:30 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/09 11:49:19 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@
 #include "utils.hpp"
 #include "commands.hpp"
 #include "channel.hpp"
+#include "quit.hpp"
+#include "msg.hpp"
 #include "quit.hpp"
 #include "msg.hpp"
 
