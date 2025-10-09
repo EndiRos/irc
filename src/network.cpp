@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 09:00:56 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/09 11:49:55 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/09 12:06:48 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,6 @@ void print_log(const std::string& msg) {
 #include <ctime>
 #include <iomanip>
 #include <iostream>
-
-
-void print_log(const std::string& msg) {
-    std::time_t now = std::time(0);
-    char buf[32];
-    std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", std::localtime(&now));
-    std::cout << "[" << buf << "] " << msg << std::endl;
-}
 
     
 void Network::setup_socket()
@@ -321,9 +313,6 @@ void Network::process_line(int fd, std::string& ib )
             msg_ res;
             res.user = ":server NOTICE * :Bad password\r\n";
             Commands::send_to_one(fd,res);
-            msg_ res;
-            res.user = ":server NOTICE * :Bad password\r\n";
-            Commands::send_to_one(fd,res);
             epoll_ctl(epfd_, EPOLL_CTL_DEL, fd, 0);
             close(fd);
             inbuf_.erase(fd);
@@ -332,9 +321,6 @@ void Network::process_line(int fd, std::string& ib )
             return; // salir de while líneas
         }
         authed_[fd] = true;
-        msg_ res;
-        res.user = "Wellcome to server " + tmp_user_->get_nick() + "\r\n";
-        Commands::send_to_one(fd,res);  //se puede personalizar
         msg_ res;
         res.user = "Wellcome to server " + tmp_user_->get_nick() + "\r\n";
         Commands::send_to_one(fd,res);  //se puede personalizar
