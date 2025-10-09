@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 09:00:56 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/07 10:56:48 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/07 12:23:36 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,9 @@ void Network::epoll_run()
                         if (errno == EAGAIN || errno == EWOULDBLOCK) break;
                         std::cerr << "read failed fd=" << fd << ": " ": error code " << errno << '\n';
                         epoll_ctl(epfd_, EPOLL_CTL_DEL, fd, 0);
-                        //Commands::send_to_all(fd,channels,tmp_user_,user_list, res);
+                        msg_ msg;
+                        msg.user =  "read failed";
+                        Commands::send_to_one (fd, msg);
                         close(fd);
                         inbuf_.erase(fd);
                         authed_.erase(fd);
@@ -208,10 +210,6 @@ void Network::epoll_run()
                     // Si cerramos dentro, salir del bucle de lectura
                 if (inbuf_.find(fd) == inbuf_.end())
                     break;
-                    // Si no hay más datos (EAGAIN se detecta arriba), salimos
-                    // (el while(true) rompe por break en read)
-                    // Continuará con más eventos epoll
-                //break;
                 }
             }
         }
@@ -262,6 +260,28 @@ void Network::new_connection()
     }
 }
 
+bool Network::verify_cap(int fd, std::string& ib)
+{
+    int count = 0;
+    int pos = 0;
+    msg_ msg;
+    while (true)
+    {
+        std::string::size_type first = ib.find('\n',pos);
+        if (first == std::string::npos)
+            break;
+        count++;
+        pos += first;
+    }
+    if (count == 2 && ib.substr(0,3) == "CAP")
+    {    
+        msg.user=":server CAP * LS :";
+        Commands::send_to_one(fd, msg);
+        return true;
+    }
+    return false;
+}
+
 void Network::process_line(int fd, std::string& ib )
 {
     std::string res;
@@ -271,6 +291,8 @@ void Network::process_line(int fd, std::string& ib )
         return;
     std::string::size_type second = ib.find('\n', first + 1); //si mas de una linea 
     if (second == std::string::npos && ib.substr(0,3) == "CAP")
+        return;
+    if (verify_cap(fd, ib))
         return;
     if (!authed_[fd]) 
     {

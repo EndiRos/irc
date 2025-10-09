@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 09:09:09 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/07 10:59:07 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/09 11:44:16 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ Commands::Commands() : commnad_len_(24) {
     const char* cmds[] = {
         "PASS", "NICK", "USER", "QUIT", "PING", "CAP", "PRIVMSG", "NOTICE",
         "JOIN", "PART", "TOPIC", "NAMES", "LIST", "MODE", "INVITE", "KICK",
-        "WHOIS", "WHO", "ISON", "USERHOST", "AWAY", "OPER", "KILL", "KILL"
+        "WHOIS", "WHO", "ISON", "USERHOST", "AWAY", "OPER", "KILL", "HOW"
     };
     for (int i = 0; i < commnad_len_; ++i)
         comands_name_[i] = cmds[i];
@@ -52,15 +52,17 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
         res = mode(msg, user, channels_list,res);
         break;
     case 8:
-        res = join_chanel(msg,user,channels_list);
+        join_chanel(msg,user,channels_list);
         break;
+    case 24:
+        res = how(msg,user,channels_list);
     default:
         break;
     }
     if (res.user.find("Error:") != 0)
         send_to_one(user.get_fd(), res);
     else
-        send_to_all(user.get_fd(),channels_list,user_list, res);
+        send_to_all(user.get_fd(),channels_list, res);
     return;
 }
 
@@ -118,15 +120,30 @@ void Commands::send_to_one(int fd, msg_ msg)
 {
     write (fd,msg.user.c_str(),msg.user.size());
 }
-void Commands::send_to_all(int fd, std::map<std::string,Channel> chanel_list, std::map<std::string, User> user, msg_  msg)
+void Commands::send_to_all(int fd, std::map<std::string,Channel> chanel_list, msg_  msg)
 {
     std::map<std::string,Channel>::iterator chan_search = chanel_list.find(msg.channel);
     if (chan_search == chanel_list.end()) 
         return;
-    std::map<std::string,User>::iterator user_it = user.begin();
-    for (;user_it != user.end(); ++user_it)
+    std::map<std::string,User>::iterator user_it = chanel_list[msg.channel].users.begin();
+    for (;user_it != chanel_list[msg.channel].users.end(); ++user_it)
     {
         if (user_it->second.get_fd() != fd &&  user_it->second.get_fd() != 0)
             write (user_it->second.get_fd(),msg.all_user.c_str(), msg.all_user.size());
+    }
+}
+void Commands::refresh_users(std::map<std::string,Channel> &channels, std::string channel)
+{
+    std::map<std::string,User>::iterator users = channels[channel].users.begin();
+    std::map<std::string,User>::iterator users_end = channels[channel].users.end();
+    for(; users != users_end; ++users)
+    {
+        if (users->second.get_fd() == 0)
+            continue;
+        msg_ res;
+        res.user += ":server 353 " + users->second.get_nick() + " = " + channel + " :" + channels[channel].user_list() + "\r\n";
+        res.user += ":server 366 " + users->second.get_nick() + " " + channel + " :End of /NAMES list.\r\n";
+        send_to_one(users->second.get_fd(),res);
+        
     }
 }

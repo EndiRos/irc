@@ -41,6 +41,15 @@ void Channel::remove_operator(User &old_ope)
 	operators.erase(old_ope.get_nick());
 }
 
+std::string Channel::user_list()
+{
+	std::string res;
+	std::map<std::string,User>::iterator it= users.begin();
+	for (; it != users.end(); it++)
+		res+= (*it).second.get_nick() + " "; 
+	return res;
+}
+
 std::string extract_channel(std::string msg)
 {
     std::string channel;

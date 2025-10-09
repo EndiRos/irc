@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 09:31:48 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/03 12:33:00 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/07 12:18:30 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ class Network
         void new_user();
         User find_user_by_fd(int fd);
         void user_out(int fd);
+        bool verify_cap(int fd, std::string& ib);
     public:
         Network(uint16_t port, std::string password);
         ~Network();

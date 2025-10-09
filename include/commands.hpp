@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 09:01:56 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/03 12:37:56 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/09 11:45:39 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include <unistd.h>
 #include "msg.hpp"
 #include "quit.hpp"
+#include "how.hpp"
 
 
 class Commands: public User
@@ -36,7 +37,8 @@ public:
     bool authorize(std::string &msg, User &tmp_user_, std::string pass, std::map<std::string, User> &user_list);
     void add_user(User &user, std::map<std::string, User> &user_list);
     static void send_to_one(int fd, msg_ res);
-    void send_to_all(int fd,std::map<std::string,Channel> chanel_list, std::map<std::string, User> user, msg_  msg);
+    static  void send_to_all(int fd,std::map<std::string,Channel> chanel_list, msg_  msg);
+    static void refresh_users(std::map<std::string,Channel> &channels, std::string channel);
 };
 
 std::string extract_channel(std::string msg);
