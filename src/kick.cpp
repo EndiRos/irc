@@ -32,7 +32,7 @@ msg_  kick(std::string &msg, User& user, std::map<std::string, Channel> &channel
 			channels_list[channel_name].remove_user(user_list[user_name]);
 			//res.user="Error:";
 			res.channel = channel_name;
-			res.all_user = ":"+user.get_nick()+"!"+user.get_name()+"@"+user.get_ip()+" KICK #"+channel_name+" "+ user_name +" " + reason + "\r\n";
+			res.user = ":"+user.get_nick()+"!"+user.get_name()+"@"+user.get_ip()+" KICK #"+channel_name+" "+ user_name +" " + reason + "\r\n";
 		}
 	}
 	return res;
