@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 09:00:56 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/09 12:06:48 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/13 11:33:33 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,17 +182,11 @@ void Network::epoll_run()
                     } 
                     else if (r == 0) 
                     {
-                        //msg_ res = quit(*tmp_user_, user_list);
-                        //Commands::send_to_one(fd,res);
-                        //std::cout << "close client fd = " << fd << '\n';
-                        //msg_ res = quit(*tmp_user_, user_list);
-                        //Commands::send_to_one(fd,res);
-                        //std::cout << "close client fd = " << fd << '\n';
+                        std::cout << "close client fd = " << fd << '\n';
                         epoll_ctl(epfd_, EPOLL_CTL_DEL, fd, 0);
                         close(fd);
                         inbuf_.erase(fd);
                         authed_.erase(fd);
-                        user_out(fd);
                         break;
                     } 
                     else 
@@ -201,15 +195,11 @@ void Network::epoll_run()
                         if (errno == EAGAIN || errno == EWOULDBLOCK) break;
                         std::cerr << "read failed fd=" << fd << ": " ": error code " << errno << '\n';
                         epoll_ctl(epfd_, EPOLL_CTL_DEL, fd, 0);
-                        msg_ msg;
-                        msg.user =  "read failed";
-                        Commands::send_to_one (fd, msg);
                         close(fd);
                         inbuf_.erase(fd);
                         authed_.erase(fd);
                         break;
                     }
-                    print_log(inbuf_[fd]);
                     print_log(inbuf_[fd]);
                     process_line(fd, inbuf_[fd]);
                     inbuf_[fd].clear();
@@ -230,6 +220,10 @@ void Network::new_connection()
     {
         sockaddr_in cli;
         socklen_t clen = sizeof(cli);
+        if (fd_ < 0) {
+            std::cerr << "Error: fd_ inválido antes de accept" << std::endl;
+            // Aquí podrías reabrir el socket o abortar
+        }
         int cfd = accept(fd_, reinterpret_cast<sockaddr*>(&cli), &clen);
         if (cfd == -1) 
         {
@@ -317,14 +311,13 @@ void Network::process_line(int fd, std::string& ib )
             close(fd);
             inbuf_.erase(fd);
             authed_.erase(fd);
-            delete tmp_user_;
             return; // salir de while líneas
         }
-        authed_[fd] = true;
+        authed_[fd] = true; 
         msg_ res;
         res.user = "Wellcome to server " + tmp_user_->get_nick() + "\r\n";
         Commands::send_to_one(fd,res);  //se puede personalizar
-        delete tmp_user_;
+        tmp_user_->reset_user();
     }
     else 
     {

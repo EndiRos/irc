@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 10:07:08 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/09 11:49:44 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/09 13:45:12 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void join_chanel(std::string msg, User &user, std::map<std::string,Channel> &cha
         res.user = ":" + user.get_nick() + "!" + user.get_name() + "@" + user.get_ip() + " JOIN :" + re_channel + "\r\n";
         Commands::send_to_one(user.get_fd(),res);
     }
-    Commands::refresh_users(channels, re_channel);
+    Commands::refresh_users(user,channels, re_channel);
     return;
 }
 

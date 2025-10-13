@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 10:01:07 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/03 10:04:47 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/13 12:13:15 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ msg_ mode(std::string &msg, User& user, std::map<std::string, Channel> &channels
     (void)user;
 	std::string channel = "";
 	bool mode;
-	size_t pos = msg.find('#');
+	size_t pos = msg.find(' ');
 	pos++;
 	while (msg[pos] != ' ' && msg[pos] != '+' && msg[pos] != '-' && msg[pos])
 	{
@@ -62,8 +62,10 @@ msg_ mode(std::string &msg, User& user, std::map<std::string, Channel> &channels
 			default:
 				break ;
 		}
+		
 		msg.erase(0,1);
 	}
+	Commands::refresh_users(user,channels_list,channel);
     return res;
 }
 

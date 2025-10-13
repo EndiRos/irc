@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 10:08:07 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/09 11:32:13 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/09 12:10:24 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,4 +17,3 @@
 
 
 void join_chanel(std::string msg, User &user, std::map<std::string,Channel> &channels);
-void refresh_users(std::map<std::string,Channel> &channels, std::string channel);

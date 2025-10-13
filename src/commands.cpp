@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/10/09 12:04:08 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/13 11:13:06 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
         //nick(line, user);
         break;
     case 3:
-        res = quit(user, user_list);
+        quit(user, user_list);
         break;
     case 13:
         res = mode(msg, user, channels_list,res);
@@ -56,7 +56,7 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
         join_chanel(msg,user,channels_list);
         break;
     case 24:
-        res = how(msg,user,channels_list);
+        res = who(msg,user,channels_list);
     default:
         break;
     }
@@ -94,10 +94,10 @@ bool Commands::authorize(std::string &msg, User &tmp_user_, std::string pass,std
             tmp_user_.set_real_name(trim_msg(line,line.find('\n')));
        }
     }
-    if (tmp_user_.get_nick() == "")
+
+    if (tmp_user_.get_nick() == ""){
         return(1);
-    if (tmp_user_.get_nick() == "")
-        return(1);
+    }
     add_user(tmp_user_, user_list);
     return (0);
 }
@@ -135,18 +135,29 @@ void Commands::send_to_all(int fd, std::map<std::string,Channel> chanel_list, ms
             write (user_it->second.get_fd(),msg.all_user.c_str(), msg.all_user.size());
     }
 }
-void Commands::refresh_users(std::map<std::string,Channel> &channels, std::string channel)
+void Commands::refresh_users(User &user,std::map<std::string,Channel> &channels, std::string &channel)
 {
     std::map<std::string,User>::iterator users = channels[channel].users.begin();
     std::map<std::string,User>::iterator users_end = channels[channel].users.end();
-    for(; users != users_end; ++users)
+    std::map<std::string,User> user_list= channels[channel].users;
+    
+    if (users != users_end && user_list.find(user.get_nick()) != user_list.end())
     {
+        for(; users != users_end; ++users)
+        {
         if (users->second.get_fd() == 0)
             continue;
         msg_ res;
         res.user += ":server 353 " + users->second.get_nick() + " = " + channel + " :" + channels[channel].user_list() + "\r\n";
         res.user += ":server 366 " + users->second.get_nick() + " " + channel + " :End of /NAMES list.\r\n";
         send_to_one(users->second.get_fd(),res);
-        
+        }
+    }
+    else
+    {
+        msg_ res;
+        res.user += ":server 353 " + user.get_nick() + " = " + channel + " : \r\n";
+        res.user += ":server 366 " + user.get_nick() + " " + channel + " :End of /NAMES list.\r\n";
+        send_to_one(user.get_fd(),res);
     }
 }

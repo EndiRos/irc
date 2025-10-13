@@ -45,8 +45,13 @@ std::string Channel::user_list()
 {
 	std::string res;
 	std::map<std::string,User>::iterator it= users.begin();
-	for (; it != users.end(); it++)
-		res+= (*it).second.get_nick() + " "; 
+	for (; it != users.end(); it++){
+		if (operators.find(it->second.get_nick()) != operators.end())
+			res += "@";
+		res+= (*it).second.get_nick() + " ";
+
+	}
+		 
 	return res;
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 09:45:28 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/03 11:06:08 by imugica-         ###   ########.fr       */
+/*   Updated: 2025/10/13 11:32:36 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,15 @@ int User::get_fd() const
 void User::add_invite( std::string channel)
 {
     user_.invited_list.push_back(channel);
+}
+void User::reset_user()
+{
+    user_.fd= 0;
+    user_.port = 0;
+    user_.ip = "";
+    user_.name="";
+    user_.nick="";
+    user_.authen = false;
 }
 
 bool User::get_authen() const {return user_.authen;}

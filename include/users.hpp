@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   users.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 10:12:59 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/03 11:04:46 by imugica-         ###   ########.fr       */
+/*   Updated: 2025/10/13 11:32:58 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ class User
         void rm_channel();
         void set_fd(int fd);
         int get_fd() const;
+        void reset_user();
     
         static  std::map<std::string, data> users;
     

@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 10:03:06 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/03 10:38:20 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/13 10:13:29 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "channel.hpp"
 #include "msg.hpp"
 #include <cstdlib>
+#include "commands.hpp"
 
 msg_ mode(std::string &msg, User& user, std::map<std::string, Channel> &channels_list, msg_ &res);
 std::string find_param_k(std::string &msg);
