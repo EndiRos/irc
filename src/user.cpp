@@ -6,7 +6,11 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 09:45:28 by enetxeba          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/10/13 11:32:36 by enetxeba         ###   ########.fr       */
+=======
+/*   Updated: 2025/10/08 11:12:44 by imugica-         ###   ########.fr       */
+>>>>>>> main
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +50,7 @@ void User::set_name(std::string name)
 }
 void User::set_real_name(std::string name)
 {
-	user_.name = name;
+	user_.real_name = name;
 }
 void User::set_ip(std::string ip)
 {

@@ -3,10 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
+/*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
+<<<<<<< HEAD
 /*   Created: Invalid date        by                   #+#    #+#             */
 /*   Updated: 2025/10/13 11:13:06 by enetxeba         ###   ########.fr       */
+=======
+/*   Created: 2025/09/19 09:09:09 by enetxeba          #+#    #+#             */
+/*   Updated: 2025/10/09 12:53:25 by imugica-         ###   ########.fr       */
+>>>>>>> main
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +54,14 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
     case 3:
         quit(user, user_list);
         break;
+    case 10:
+        res = topic(msg, user, channels_list,user_list);
+        break;
     case 13:
         res = mode(msg, user, channels_list,res);
+        break;
+    case 15:
+        res = kick(msg, user, channels_list,user_list);
         break;
     case 8:
         join_chanel(msg,user,channels_list);
@@ -60,10 +71,8 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
     default:
         break;
     }
-    if (res.user.find("Error:") != 0)
-        send_to_one(user.get_fd(), res);
-    else
-        send_to_all(user.get_fd(),channels_list, res);
+    send_to_one(user.get_fd(), res);
+    send_to_all(user.get_fd(),channels_list, res);
     return;
 }
 
