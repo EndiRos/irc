@@ -30,5 +30,7 @@ msg_ topic(std::string &msg, User& user, std::map<std::string, Channel> &channel
     }
 	else
 		res.user = ":server 403"+user.get_nick()+" #"+channel_name+" :No such channel"+ "\r\n";
+    res.all_user = res.user;
+    res.channel = channel_name;
     return res;
 }

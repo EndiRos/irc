@@ -6,7 +6,7 @@
 /*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 09:01:56 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/09 12:12:05 by imugica-         ###   ########.fr       */
+/*   Updated: 2025/10/09 12:13:34 by imugica-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #include "msg.hpp"
 #include "quit.hpp"
 #include "topic.h"
+#include "how.hpp"
 
 
 class Commands: public User

@@ -6,7 +6,7 @@
 /*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 09:09:09 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/09 12:12:14 by imugica-         ###   ########.fr       */
+/*   Updated: 2025/10/09 12:53:25 by imugica-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,10 +66,8 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
     default:
         break;
     }
-    if (res.user.find("Error:") != 0)
-        send_to_one(user.get_fd(), res);
-    else
-        send_to_all(user.get_fd(),channels_list, res);
+    send_to_one(user.get_fd(), res);
+    send_to_all(user.get_fd(),channels_list, res);
     return;
 }
 
