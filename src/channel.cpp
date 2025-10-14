@@ -31,16 +31,18 @@ void Channel::add_operators(User &new_ope)
 {
 	this->operators[new_ope.get_nick()] = new_ope;
 }
-
-void Channel::remove_user(User &new_user)
-{
-	users.erase(new_user.get_nick());
-}
-
 void Channel::remove_operator(User &old_ope)
 {
 	operators.erase(old_ope.get_nick());
 }
+
+void Channel::remove_user(User &new_user)
+{
+	users.erase(new_user.get_nick());
+	remove_operator(new_user);
+}
+
+
 
 std::string Channel::user_list()
 {
