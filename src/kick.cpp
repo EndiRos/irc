@@ -36,6 +36,6 @@ msg_  kick(std::string &msg, User& user, std::map<std::string, Channel> &channel
 			res.user = ":"+user.get_nick()+"!"+user.get_name()+"@"+user.get_ip()+" KICK #"+channel_name+" "+ user_name +" " + reason + "\r\n";
 		}
 	}
-	Commands::refresh_users(channels_list, channel_name);
+	Commands::refresh_users(user, channels_list, channel_name);
 	return res;
 }

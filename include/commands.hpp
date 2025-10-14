@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 09:01:56 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/13 12:17:29 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/13 12:22:02 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@
 #include "msg.hpp"
 #include "quit.hpp"
 #include "topic.h"
-#include "how.hpp"
 #include "who.hpp"
 
 

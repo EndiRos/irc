@@ -3,15 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-<<<<<<< HEAD
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/10/13 11:13:06 by enetxeba         ###   ########.fr       */
-=======
-/*   Created: 2025/09/19 09:09:09 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/09 12:53:25 by imugica-         ###   ########.fr       */
->>>>>>> main
+/*   Updated: 2025/10/13 12:38:58 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,7 +160,7 @@ void Commands::refresh_users(User &user,std::map<std::string,Channel> &channels,
     else
     {
         msg_ res;
-        res.user += ":server 353 " + user.get_nick() + " = " + channel + " : \r\n";
+        res.user += ":server 353 " + user.get_nick() + " = " + channel + " :" + channels[channel].user_list() + "\r\n";
         res.user += ":server 366 " + user.get_nick() + " " + channel + " :End of /NAMES list.\r\n";
         send_to_one(user.get_fd(),res);
     }
