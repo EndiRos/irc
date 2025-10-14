@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
+/*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 10:01:07 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/13 12:13:15 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/14 11:23:18 by imugica-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,24 +24,20 @@ msg_ mode(std::string &msg, User& user, std::map<std::string, Channel> &channels
 		channel += (char)msg[pos];
 		pos++;
 	}
-	std::cout << channel << std::endl;
+	if (channel.find('\r') != std::string::npos)
+	{
+		channel.erase(channel.find('\r'), 2);
+	}
 	while (msg[pos] == ' ')
 		pos++;
 	msg.erase(0, pos);
 	pos = 0;
 	while(msg[pos] && msg[pos] != ' ')
 	{
-		std::cout << msg << std::endl;
 		if(msg[pos] == '+')
-		{
 			mode = true;
-			std::cout << "true mode" << std::endl;
-		}
 		else if (msg[pos] == '-')
-		{
 			mode = false;
-			std::cout << "false mode" << std::endl;
-		}
 		switch (msg[pos])
 		{
 			case 'i':
@@ -192,6 +188,8 @@ std::string execute_k(std::string &msg, bool mode, Channel &my_channel)
 std::string  execute_o(std::string &msg, bool mode, Channel &my_channel)
 {
 	std::string user = find_param_o(msg);
+	if (user.find('\r') != std::string::npos)
+		user.erase(user.find('\r'), 2);
 	if (user != "" && mode)
 	{
 		std::map<std::string, User>::iterator it = my_channel.users.find(user);
