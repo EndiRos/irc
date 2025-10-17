@@ -6,7 +6,7 @@
 /*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 10:01:07 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/14 14:26:23 by imugica-         ###   ########.fr       */
+/*   Updated: 2025/10/17 12:02:47 by imugica-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ msg_ mode(std::string &msg, User& user, std::map<std::string, Channel> &channels
 				break;
 			case 'o':
 				res.user += execute_o(msg, mode, channels_list[channel]);
+				Commands::refresh_users(user,channels_list,channel);
 				break;
 			case 'l':
 				res.user += execute_l(msg, mode, channels_list[channel]);
@@ -92,10 +93,9 @@ msg_ mode(std::string &msg, User& user, std::map<std::string, Channel> &channels
 			default:
 				break ;
 		}
-		
 		msg.erase(0,1);
 	}
-	Commands::refresh_users(user,channels_list,channel);
+	
     return res;
 }
 
@@ -113,6 +113,10 @@ std::string find_param_k(std::string &msg)
     {
         size_t end = msg.find(' ', pos);
         std::string param = (end == std::string::npos) ? msg.substr(pos) : msg.substr(pos, end - pos);
+		if (param.find('\r') != std::string::npos)
+		{
+			param.erase(param.find('\r'), 2);
+		}
         std::cout << "Trying parameter: [" << param << "]" << std::endl;
 		if (end == std::string::npos)
             msg.erase(pos);
