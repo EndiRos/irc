@@ -6,11 +6,43 @@
 /*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 10:01:07 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/14 11:23:18 by imugica-         ###   ########.fr       */
+/*   Updated: 2025/10/14 14:26:23 by imugica-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mode.hpp"
+#include <sstream>
+
+std::string get_modes(const Channel& channel)
+{
+    std::string modes = "+";
+    std::string params = "";
+
+    if (channel.invite_f)
+        modes += "i";
+    if (channel.topic_f) // renamed for clarity
+        modes += "t";
+    if (channel.key_f) 
+	{
+        modes += "k";
+        params += " ";
+		params += channel.key;
+    }
+    if (channel.limit_f) 
+	{
+		std::stringstream ss;
+		ss << channel.user_limit;
+        modes += "l";
+        params += " ";
+		params += (ss.str());
+    }
+
+    if (modes == "+") // No modes set
+        return "";
+
+    return modes + params;
+}
+
 
 msg_ mode(std::string &msg, User& user, std::map<std::string, Channel> &channels_list, msg_ &res)
 {
@@ -32,6 +64,8 @@ msg_ mode(std::string &msg, User& user, std::map<std::string, Channel> &channels
 		pos++;
 	msg.erase(0, pos);
 	pos = 0;
+	if (msg.size() == 2 || msg.size() == 0)
+		res.user += ":server 324 "+user.get_nick()+" "+channel+ " "+get_modes(channels_list[channel])+"\r\n" ;
 	while(msg[pos] && msg[pos] != ' ')
 	{
 		if(msg[pos] == '+')
