@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/10/22 12:54:35 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/22 14:08:23 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,6 +162,7 @@ void Commands::refresh_users(User &user,std::map<std::string,Channel> &channels,
         msg_ res;
         res.user += ":server 353 " + user.get_nick() + " = " + channel + " :" + channels[channel].user_list() + "\r\n";
         res.user += ":server 366 " + user.get_nick() + " " + channel + " :End of /NAMES list.\r\n";
+        std::cout << res.user << std::endl;
         std::cout << res.user << std::endl;
         send_to_one(user.get_fd(),res);
     }

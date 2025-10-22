@@ -12,6 +12,8 @@ msg_  invite(std::string &msg, User& user, std::map<std::string, Channel> &chann
     std::string channel_name = msg.substr(msg.find('#') + 1, msg.size());
     std::map<std::string,User>::iterator it = user_list.find(user_name);
     std::map<std::string,Channel>::iterator it2=channels_list.find(channel_name);
+    if (channels_list[channel_name].operators.find(user.get_name()) == channels_list[channel_name].operators.end())
+		return res;
     if (it!=user_list.end() && it2!=channels_list.end())
     {  
         user_list[user_name].add_invite(channel_name);
