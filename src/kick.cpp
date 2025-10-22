@@ -33,7 +33,10 @@ msg_  kick(std::string &msg, User& user, std::map<std::string, Channel> &channel
 			channels_list[channel_name].remove_user(user_list[user_name]);
 			//res.user="Error:";
 			res.channel = channel_name;
-			res.user = ":"+user.get_nick()+"!"+user.get_name()+"@"+user.get_ip()+" KICK #"+channel_name+" "+ user_name +" " + reason + "\r\n";
+			res.user = ":"+user.get_nick()+"!"+user.get_name()+"@"+user.get_ip()+" KICK "+channel_name+" "+ user_name +" " + reason + "\r\n";
+			//DOTS + nickname + TILD + username + IP_ADD + SPACE + command + SPACE + chan_name + SPACE + kcked_nick + " :" + nickname + NEW_LINE"
+			std::cout << res.user << " fd: " << user_list[user_name].get_fd() << std::endl;
+			Commands::send_to_one(user_list[user_name].get_fd(), res);
 		}
 	}
 	Commands::refresh_users(user, channels_list, channel_name);

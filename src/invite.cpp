@@ -16,8 +16,8 @@ msg_  invite(std::string &msg, User& user, std::map<std::string, Channel> &chann
     {  
         user_list[user_name].add_invite(channel_name);
 
-		res.user = ":server 341 " + user.get_nick() + " " + user_name + " #" + channel_name + "\r\n" ;
-		res.all_user = ":"+user.get_nick()+"!"+user.get_name()+"@"+user.get_ip()+" INVITE "+user_name+" :#"+channel_name+ "\r\n" ;
+		res.user = ":server 341 " + user.get_nick() + " " + user_name + " " + channel_name + "\r\n" ;
+		res.all_user = ":"+user.get_nick()+"!"+user.get_name()+"@"+user.get_ip()+" INVITE "+user_name+" :"+channel_name+ "\r\n" ;
 		res.channel = channel_name;
         //TODO
         //---------PARA MANDAR AL OTRO USER----

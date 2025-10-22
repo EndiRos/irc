@@ -18,18 +18,18 @@ msg_ topic(std::string &msg, User& user, std::map<std::string, Channel> &channel
     if (it != channels_list.end())
     {
 		if(channels_list[channel_name].topic_f)
-			res.user = ":server 403"+user.get_nick()+" #"+channel_name+" :Can not change the topic"+ "\r\n";
+			res.user = ":server 403"+user.get_nick()+" "+channel_name+" :Can not change the topic"+ "\r\n";
 		else if (pos2 == std::string::npos)
-			res.user = ":server 332 "+user.get_nick()+" #"+channel_name+" :"+channels_list[channel_name].topic+"\r\n";
+			res.user = ":server 332 "+user.get_nick()+" "+channel_name+" :"+channels_list[channel_name].topic+"\r\n";
 		else
 		{
 			channels_list[channel_name].topic = msg.substr(pos2 + 1, msg.size());
-			res.user = ":"+user.get_nick()+"!"+user.get_name()+"@"+user.get_ip()+" TOPIC "+"#"+channel_name +" :"+ channels_list[channel_name].topic+"\r\n";
+			res.user = ":"+user.get_nick()+"!"+user.get_name()+"@"+user.get_ip()+" TOPIC "+" "+channel_name +" :"+ channels_list[channel_name].topic+"\r\n";
 			res.channel = channel_name;
 		}
     }
 	else
-		res.user = ":server 403"+user.get_nick()+" #"+channel_name+" :No such channel"+ "\r\n";
+		res.user = ":server 403"+user.get_nick()+" "+channel_name+" :No such channel"+ "\r\n";
     res.all_user = res.user;
     res.channel = channel_name;
     return res;

@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/10/14 11:08:41 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/22 12:54:35 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
         join_chanel(msg,user,channels_list);
         break;
     case 24:
-        res = who(msg,user,channels_list);
+        //res = who(msg,user,channels_list);
     default:
         break;
     }
