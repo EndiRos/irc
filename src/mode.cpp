@@ -6,7 +6,7 @@
 /*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 10:01:07 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/17 12:02:47 by imugica-         ###   ########.fr       */
+/*   Updated: 2025/10/22 11:40:54 by imugica-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ msg_ mode(std::string &msg, User& user, std::map<std::string, Channel> &channels
 		pos++;
 	msg.erase(0, pos);
 	pos = 0;
+	if (channels_list[channel].operators.find(user.get_name()) == channels_list[channel].operators.end())
+		return res;
 	if (msg.size() == 2 || msg.size() == 0)
 		res.user += ":server 324 "+user.get_nick()+" "+channel+ " "+get_modes(channels_list[channel])+"\r\n" ;
 	while(msg[pos] && msg[pos] != ' ')

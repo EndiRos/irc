@@ -14,6 +14,8 @@ msg_ topic(std::string &msg, User& user, std::map<std::string, Channel> &channel
         channel_name = msg.substr(msg.find(' ') + 1, pos2 - pos -2);
     else
         channel_name = msg.substr(pos + 1, msg.find('\r') - pos -1);
+    if (channels_list[channel_name].operators.find(user.get_name()) == channels_list[channel_name].operators.end())
+		return res;
     std::map<std::string,Channel>::iterator it=channels_list.find(channel_name);
     if (it != channels_list.end())
     {
