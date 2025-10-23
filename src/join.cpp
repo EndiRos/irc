@@ -3,14 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
+/*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 10:07:08 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/22 14:08:05 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/23 11:22:06 by imugica-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "join.hpp"
+
+bool check_invite(Channel channel, User &user)
+{
+    if (channel.invite_f)
+        return user.is_invited(channel.c_name);      
+    else
+        return true;
+}
 
 void join_chanel(std::string msg, User &user, std::map<std::string,Channel> &channels)
 {
@@ -34,6 +42,10 @@ void join_chanel(std::string msg, User &user, std::map<std::string,Channel> &cha
     }
     else
     {
+        if (!check_invite(channels[re_channel],user))
+        {
+            return ;
+        }
         if (!channels[re_channel].key_f)
        { 
             channels[re_channel].add_user(user);
@@ -53,7 +65,6 @@ void join_chanel(std::string msg, User &user, std::map<std::string,Channel> &cha
                 Commands::send_to_one(user.get_fd(),res);
                 return;
             }
-            
         }
         
     }

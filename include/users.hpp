@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   users.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
+/*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 10:12:59 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/13 11:32:58 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/23 11:11:51 by imugica-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ class User
         void add_channel(std::string);
         void add_user();
         void add_invite(std::string channel_name);
+        bool is_invited(std::string channel_name);
         bool get_authen()const ;
         std::string get_nick() const ;
         std::string get_name()const ;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
+/*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 09:01:56 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/13 12:22:02 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/23 11:27:39 by imugica-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 #include "quit.hpp"
 #include "topic.h"
 #include "who.hpp"
+#include "invite.h"
 
 
 class Commands: public User

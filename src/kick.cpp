@@ -22,7 +22,7 @@ msg_  kick(std::string &msg, User& user, std::map<std::string, Channel> &channel
 		user_name = msg.substr(msg.find(' ',pos) + 1, pos2 - msg.find(' ',pos) - 2);
 		reason += msg.substr(pos2 + 1,  msg.find('\r') - pos2 - 1);
 	}
-	if (channels_list[channel_name].operators.find(user.get_name()) == channels_list[channel_name].operators.end())
+	if (channels_list[channel_name].operators.find(user.get_nick()) == channels_list[channel_name].operators.end())
 		return res;
 	std::map<std::string,User>::iterator it = channels_list[channel_name].users.find(user_name);
     if (it!=channels_list[channel_name].users.end())

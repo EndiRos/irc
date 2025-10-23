@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
+/*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 09:45:28 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/13 12:22:24 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/23 11:17:41 by imugica-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <map>
 #include <users.hpp>
 #include <vector>
+#include <algorithm>
 
 User::User()
 {
@@ -73,6 +74,16 @@ int User::get_fd() const
 void User::add_invite( std::string channel)
 {
     user_.invited_list.push_back(channel);
+}
+bool User::is_invited(std::string channel_name)
+{
+    std::vector<std::string> names = user_.invited_list;
+    std::vector<std::string>::iterator it = std::find(names.begin(), names.end(), channel_name);
+
+    if (it != names.end())
+        return true;
+    else
+        return false;
 }
 void User::reset_user()
 {

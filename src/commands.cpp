@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
+/*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/10/22 14:08:23 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/23 11:28:03 by imugica-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,9 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
         break;
     case 13:
         res = mode(msg, user, channels_list,res);
+        break;
+    case 14:
+        res = invite(msg, user, channels_list,user_list);
         break;
     case 15:
         res = kick(msg, user, channels_list,user_list);

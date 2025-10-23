@@ -7,12 +7,12 @@ msg_  invite(std::string &msg, User& user, std::map<std::string, Channel> &chann
 {
     msg_ res;
     size_t pos = msg.find(' ') + 1;
-    size_t pos2 = msg.find(' ');
+    size_t pos2 = msg.find(' ', pos);
     std::string user_name = msg.substr(pos, pos2 - pos);
-    std::string channel_name = msg.substr(msg.find('#') + 1, msg.size());
+    std::string channel_name = msg.substr(msg.find(' ', pos) + 1, msg.size() - pos2 - 3);
     std::map<std::string,User>::iterator it = user_list.find(user_name);
     std::map<std::string,Channel>::iterator it2=channels_list.find(channel_name);
-    if (channels_list[channel_name].operators.find(user.get_name()) == channels_list[channel_name].operators.end())
+    if (channels_list[channel_name].operators.find(user.get_nick()) == channels_list[channel_name].operators.end())
 		return res;
     if (it!=user_list.end() && it2!=channels_list.end())
     {  
