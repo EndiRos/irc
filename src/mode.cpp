@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
+/*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 10:01:07 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/27 11:59:15 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/27 14:10:04 by imugica-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,12 +62,17 @@ void mode(std::string &msg, User& user, std::map<std::string, Channel> &channels
 		if (channel.find(' ') != std::string::npos) 
 			channel.erase(channel.find(' '), channel.size());
 	}
-	pos = msg.find('\n',pos);
+	if (msg.find(' ',pos+1) != std::string::npos)
+		pos = msg.find(' ',pos+1);
+	else
+		pos = msg.find('\r',pos+1);
 	msg.erase(0, pos);
 	pos = 0;
 	if (channels_list[channel].operators.find(user.get_nick()) == channels_list[channel].operators.end())
 		return ;
-	if (msg.size() == 1 || msg.size() == 0) //solo mira si es i
+	while(*(msg.begin()) == ' ')
+		msg.erase(0,1);	
+	if (msg.size() == 2 || msg.size() == 0) //solo mira si es i
 		res.user += ":server 324 "+user.get_nick()+" "+channel+ " "+get_modes(channels_list[channel])+"\r\n" ;
 	while(msg[pos] && msg[pos] != ' ')
 	{
@@ -97,9 +102,8 @@ void mode(std::string &msg, User& user, std::map<std::string, Channel> &channels
 				break ;
 		}
 		msg.erase(0,1);
-		Commands::send_to_one(user.get_fd(),res);
 	}
-	
+	Commands::send_to_one(user.get_fd(),res);
 }
 
 std::string find_param_k(std::string &msg)
