@@ -6,7 +6,7 @@
 /*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 10:07:08 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/23 11:22:06 by imugica-         ###   ########.fr       */
+/*   Updated: 2025/10/24 12:21:52 by imugica-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,13 @@ void join_chanel(std::string msg, User &user, std::map<std::string,Channel> &cha
             return ;
         }
         if (!channels[re_channel].key_f)
-       { 
+        { 
             channels[re_channel].add_user(user);
             res.user = ":" + user.get_nick() + "!" + user.get_name() + "@" + user.get_ip() + " JOIN :" + re_channel + "\r\n";
             Commands::send_to_one(user.get_fd(),res);
         }
-        else{
+        else
+        {
             std::string re_key = msg.substr(pos2 + 1,pos3 - (pos2 + 1));
             if (re_key == channels[re_channel].key)
             {
@@ -60,13 +61,13 @@ void join_chanel(std::string msg, User &user, std::map<std::string,Channel> &cha
                 res.user = ":" + user.get_nick() + "!" + user.get_name() + "@" + user.get_ip() + " JOIN :" + re_channel + "\r\n";
                 Commands::send_to_one(user.get_fd(),res);
             }
-            else{
+            else
+            {
                 res.user = ":server NOTICE " + user.get_name() + " :Password incorrect\r\n";
                 Commands::send_to_one(user.get_fd(),res);
                 return;
             }
         }
-        
     }
     Commands::refresh_users(user,channels, re_channel);
     return;
