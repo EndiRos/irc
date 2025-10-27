@@ -6,7 +6,7 @@
 /*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 10:07:08 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/24 12:21:52 by imugica-         ###   ########.fr       */
+/*   Updated: 2025/10/27 12:22:28 by imugica-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,14 @@ void join_chanel(std::string msg, User &user, std::map<std::string,Channel> &cha
     if (pos2 == std::string::npos)
         pos2=pos3;
     std::string re_channel = msg.substr(pos,pos2 - pos);
-    std::map<std::string,Channel>::iterator it=channels.find(re_channel);
     msg_ res;
+    if (re_channel[0] != '#')
+    {
+        res.user = ":server NOTICE " + user.get_name() + " :#Missing in channel_name\r\n";
+        Commands::send_to_one(user.get_fd(),res);
+        return ;
+    }
+    std::map<std::string,Channel>::iterator it=channels.find(re_channel);
     if (it==channels.end())
     {
         Channel tmp_chan(user,re_channel);
