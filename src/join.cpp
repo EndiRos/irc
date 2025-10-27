@@ -6,7 +6,7 @@
 /*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 10:07:08 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/27 12:22:28 by imugica-         ###   ########.fr       */
+/*   Updated: 2025/10/27 13:00:54 by imugica-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ void join_chanel(std::string msg, User &user, std::map<std::string,Channel> &cha
     {
         Channel tmp_chan(user,re_channel);
         tmp_chan.add_operators(user);
-        tmp_chan.add_user(user);
         tmp_chan.add_user(user);
         channels[re_channel]=tmp_chan;
         res.user = ":" + user.get_nick() + "!" + user.get_name() + "@" + user.get_ip() + " JOIN :" + re_channel + "\r\n";

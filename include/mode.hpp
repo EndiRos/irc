@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mode.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 10:03:06 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/14 14:17:09 by imugica-         ###   ########.fr       */
+/*   Updated: 2025/10/27 10:21:17 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include <cstdlib>
 #include "commands.hpp"
 
-msg_ mode(std::string &msg, User& user, std::map<std::string, Channel> &channels_list, msg_ &res);
+void  mode(std::string &msg, User& user, std::map<std::string, Channel> &channels_list);
 std::string find_param_k(std::string &msg);
 std::string find_param_o(std::string &msg);
 std::string find_param_l(std::string& msg);

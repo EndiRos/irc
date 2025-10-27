@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/10/23 11:28:03 by imugica-         ###   ########.fr       */
+/*   Updated: 2025/10/27 11:57:18 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,49 +28,56 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
 {
     (void)user_list;//temporal ya lño usaremos 
     (void)channels_list;
+    std::string trim;
     msg_ res;
-    std::string::size_type pos = 0;
-    std::string::size_type pos2 = 0;
-    res.channel = extract_channel(msg);
-    pos2 = msg.find(' ');
-    int i = 0;
-    for (; i < commnad_len_; i++ )
-    {
-        if (msg.substr(pos,pos2) == comands_name_[i])
+    while (true)
+    { 
+        std::string::size_type pos = msg.find('\n');
+        if (pos == std::string::npos)
             break;
+        std::string trim = msg.substr(0, pos + 1);   // incluye '\n'
+        msg.erase(0, pos + 1);  
+        pos = 0;
+        std::string::size_type pos2 = 0;
+        pos2 = trim.find(' ');
+        int i = 0;
+        for (; i < commnad_len_; i++ )
+        {
+            if (trim.substr(pos,pos2) == comands_name_[i])
+                break;
+        }
+        switch (i)
+        {
+        case 0:
+            break;
+        case 1:
+            //nick(line, user);
+            break;
+        case 3:
+            quit(user, user_list);
+            break;
+        case 10:
+            res = topic(trim, user, channels_list,user_list);
+            break;
+        case 13:
+            mode(trim, user, channels_list);
+            break;
+        case 14:
+            res = invite(trim, user, channels_list,user_list);
+            break;
+        case 15:
+            res = kick(trim, user, channels_list,user_list);
+            break;
+        case 8:
+            join_chanel(trim,user,channels_list);
+            break;
+        case 24:
+            //res = who(msg,user,channels_list);
+        default:
+            break;
+        }
+        
     }
-    switch (i)
-    {
-    case 0:
-        break;
-    case 1:
-        //nick(line, user);
-        break;
-    case 3:
-        quit(user, user_list);
-        break;
-    case 10:
-        res = topic(msg, user, channels_list,user_list);
-        break;
-    case 13:
-        res = mode(msg, user, channels_list,res);
-        break;
-    case 14:
-        res = invite(msg, user, channels_list,user_list);
-        break;
-    case 15:
-        res = kick(msg, user, channels_list,user_list);
-        break;
-    case 8:
-        join_chanel(msg,user,channels_list);
-        break;
-    case 24:
-        //res = who(msg,user,channels_list);
-    default:
-        break;
-    }
-    send_to_one(user.get_fd(), res);
-    send_to_all(user.get_fd(),channels_list, res);
     return;
 }
 
