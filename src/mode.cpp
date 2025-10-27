@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 10:01:07 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/23 11:02:43 by imugica-         ###   ########.fr       */
+/*   Updated: 2025/10/27 11:31:00 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,13 +44,13 @@ std::string get_modes(const Channel& channel)
 }
 
 
-msg_ mode(std::string &msg, User& user, std::map<std::string, Channel> &channels_list, msg_ &res)
+void mode(std::string &msg, User& user, std::map<std::string, Channel> &channels_list)
 {
-    (void)user;
-	std::string channel = "";
+    msg_ res;
 	bool mode;
-	size_t pos = msg.find(' ');
-	pos++;
+	std::string::size_type pos = msg.find(' ');
+	std::string::size_type pos2 = msg.find('\r',pos);
+	std::string channel = msg.substr(pos + 1,pos2 - pos);
 	while (msg[pos] != ' ' && msg[pos] != '+' && msg[pos] != '-' && msg[pos])
 	{
 		channel += (char)msg[pos];
@@ -58,15 +58,16 @@ msg_ mode(std::string &msg, User& user, std::map<std::string, Channel> &channels
 	}
 	if (channel.find('\r') != std::string::npos)
 	{
-		channel.erase(channel.find('\r'), 2);
+		channel.erase(channel.find('\r'), channel.size());
+		if (channel.find(' ') != std::string::npos) 
+			channel.erase(channel.find(' '), channel.size());
 	}
-	while (msg[pos] == ' ')
-		pos++;
+	pos = msg.find('\n',pos);
 	msg.erase(0, pos);
 	pos = 0;
 	if (channels_list[channel].operators.find(user.get_nick()) == channels_list[channel].operators.end())
-		return res;
-	if (msg.size() == 2 || msg.size() == 0)
+		return ;
+	if (msg.size() == 2 || msg.size() == 0) //solo mira si es i
 		res.user += ":server 324 "+user.get_nick()+" "+channel+ " "+get_modes(channels_list[channel])+"\r\n" ;
 	while(msg[pos] && msg[pos] != ' ')
 	{
@@ -96,9 +97,9 @@ msg_ mode(std::string &msg, User& user, std::map<std::string, Channel> &channels
 				break ;
 		}
 		msg.erase(0,1);
+		Commands::send_to_one(user.get_fd(),res);
 	}
 	
-    return res;
 }
 
 std::string find_param_k(std::string &msg)
