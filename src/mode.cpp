@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 10:01:07 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/27 11:31:00 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/27 11:59:15 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void mode(std::string &msg, User& user, std::map<std::string, Channel> &channels
 	pos = 0;
 	if (channels_list[channel].operators.find(user.get_nick()) == channels_list[channel].operators.end())
 		return ;
-	if (msg.size() == 2 || msg.size() == 0) //solo mira si es i
+	if (msg.size() == 1 || msg.size() == 0) //solo mira si es i
 		res.user += ":server 324 "+user.get_nick()+" "+channel+ " "+get_modes(channels_list[channel])+"\r\n" ;
 	while(msg[pos] && msg[pos] != ' ')
 	{

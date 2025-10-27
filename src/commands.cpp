@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/10/27 11:48:17 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/27 11:57:18 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
     (void)user_list;//temporal ya lño usaremos 
     (void)channels_list;
     std::string trim;
-    
+    msg_ res;
     while (true)
     { 
         std::string::size_type pos = msg.find('\n');
@@ -37,7 +37,7 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
             break;
         std::string trim = msg.substr(0, pos + 1);   // incluye '\n'
         msg.erase(0, pos + 1);  
-        std::string::size_type pos = 0;
+        pos = 0;
         std::string::size_type pos2 = 0;
         pos2 = trim.find(' ');
         int i = 0;
