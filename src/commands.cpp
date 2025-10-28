@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/10/27 11:57:18 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/27 14:16:21 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
         {
         case 0:
             break;
-        case 1:
-            //nick(line, user);
+        case 6:
+            privmsg(trim ,user, channels_list,user_list);
             break;
         case 3:
             quit(user, user_list);
