@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 09:01:56 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/27 13:55:14 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/28 11:43:16 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 #include <unistd.h>
 #include "msg.hpp"
 #include "quit.hpp"
-#include "topic.h"
+#include "topic.hpp"
 #include "who.hpp"
 #include "invite.h"
 #include "privmsg.hpp"

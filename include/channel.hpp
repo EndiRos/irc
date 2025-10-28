@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 10:34:04 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/07 12:44:06 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/28 11:44:20 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ class Channel
 		bool key_f;
 		bool limit_f;
 		std::string key;
-		int user_limit;
+		unsigned long user_limit;
 	
 		Channel();
 		Channel(User &creator, std::string &name);

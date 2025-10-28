@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imugica- <imugica-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 10:07:08 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/27 13:00:54 by imugica-         ###   ########.fr       */
+/*   Updated: 2025/10/28 12:44:21 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ bool check_invite(Channel channel, User &user)
         return true;
 }
 
-void join_chanel(std::string msg, User &user, std::map<std::string,Channel> &channels)
+void join_chanel(std::string msg, User &user, std::map<std::string,Channel> &channels,  std::map<std::string, User> &user_list)
 {
     std::string::size_type pos =  msg.find(' ') + 1;
     std::string::size_type pos2 = msg.find(' ',pos);
@@ -53,6 +53,13 @@ void join_chanel(std::string msg, User &user, std::map<std::string,Channel> &cha
         }
         if (!channels[re_channel].key_f)
         { 
+            // antes de añadir al usuario, comprobar límite del canal
+            if (channels[re_channel].limit_f && channels[re_channel].users.size() >= channels[re_channel].user_limit)
+            {
+                res.user = ":server 471 " + user.get_nick() + " " + re_channel + " :Cannot join channel (+l)\r\n";
+                Commands::send_to_one(user.get_fd(), res);
+                return;
+            }
             channels[re_channel].add_user(user);
             res.user = ":" + user.get_nick() + "!" + user.get_name() + "@" + user.get_ip() + " JOIN :" + re_channel + "\r\n";
             Commands::send_to_one(user.get_fd(),res);
@@ -75,6 +82,8 @@ void join_chanel(std::string msg, User &user, std::map<std::string,Channel> &cha
         }
     }
     Commands::refresh_users(user,channels, re_channel);
+    std::string tp = "TOPIC " + re_channel + "\r\n";
+    topic(tp,user,channels,user_list);
     return;
 }
 

@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/10/27 14:16:21 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/28 12:34:06 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
             quit(user, user_list);
             break;
         case 10:
-            res = topic(trim, user, channels_list,user_list);
+            topic(trim, user, channels_list,user_list);
             break;
         case 13:
             mode(trim, user, channels_list);
@@ -69,14 +69,13 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
             res = kick(trim, user, channels_list,user_list);
             break;
         case 8:
-            join_chanel(trim,user,channels_list);
+            join_chanel(trim,user,channels_list,user_list);
             break;
         case 24:
             //res = who(msg,user,channels_list);
         default:
             break;
         }
-        
     }
     return;
 }

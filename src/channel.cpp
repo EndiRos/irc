@@ -15,7 +15,7 @@ Channel::Channel(User &creator, std::string &name)
 	limit_f = false;
 	key = "";
 	user_limit = 0;
-	topic="Default topic";
+	topic="Default topic\r\n";
 }
 
 Channel::~Channel()
