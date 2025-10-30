@@ -1,10 +1,18 @@
-#include <iostream>
-#include "users.hpp"
-#include "channel.hpp"
-#include "msg.hpp"
-#include "commands.hpp"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   kick.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/30 09:06:47 by enetxeba          #+#    #+#             */
+/*   Updated: 2025/10/30 09:10:30 by enetxeba         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-msg_  kick(std::string &msg, User& user, std::map<std::string, Channel> &channels_list, std::map<std::string, User> &user_list)
+#include "kick.hpp"
+
+void kick(std::string &msg, User& user, std::map<std::string, Channel> &channels_list, std::map<std::string, User> &user_list)
 {
 	msg_ res;
 	size_t pos = msg.find(' ') + 1;
@@ -13,17 +21,17 @@ msg_  kick(std::string &msg, User& user, std::map<std::string, Channel> &channel
 	std::string user_name;
 	std::string reason = ":";
 	if (pos2 == std::string::npos)
-		{
-			user_name = msg.substr(msg.find(' ',pos) + 1,msg.find('\r') - msg.find(' ',pos) - 1);
-			reason += "no reason";
-		}
+	{
+		user_name = msg.substr(msg.find(' ',pos) + 1,msg.find('\r') - msg.find(' ',pos) - 1);
+		reason += "no reason";
+	}
 	else
 	{
 		user_name = msg.substr(msg.find(' ',pos) + 1, pos2 - msg.find(' ',pos) - 2);
 		reason += msg.substr(pos2 + 1,  msg.find('\r') - pos2 - 1);
 	}
 	if (channels_list[channel_name].operators.find(user.get_nick()) == channels_list[channel_name].operators.end())
-		return res;
+		return ;
 	std::map<std::string,User>::iterator it = channels_list[channel_name].users.find(user_name);
     if (it!=channels_list[channel_name].users.end())
 	{
@@ -42,5 +50,5 @@ msg_  kick(std::string &msg, User& user, std::map<std::string, Channel> &channel
 		}
 	}
 	Commands::refresh_users(user, channels_list, channel_name);
-	return res;
+	return;
 }

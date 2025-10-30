@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 09:00:56 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/13 11:33:33 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/30 11:50:54 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,12 +112,37 @@ std::string Network::pick_ipv4()
 
 void Network::epoll_setup()
 {
+    
     epfd_ = epoll_create1(EPOLL_CLOEXEC);
     if (epfd_== -1)
     {
         int e = errno;
         throw Err::make("epoll_create1 failed", e);
     }
+    
+    sigset_t mask;
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGINT);
+    if (sigprocmask(SIG_BLOCK, &mask, 0)){
+        int e = errno;
+        throw Err::make ("sigpocmask failed", e);
+    }
+    signalfd_ = signalfd(-1, &mask, SFD_NONBLOCK | SFD_CLOEXEC);
+    if (signalfd_ == -1 ){
+        int e = errno;
+        throw Err::make ("signal_fd failed", e);
+    }
+    epoll_event sev;
+    my_memset(&sev,0,sizeof(sev));
+    sev.events = EPOLLIN;
+    sev.data.fd = signalfd_;
+    if (epoll_ctl(epfd_, EPOLL_CTL_ADD, signalfd_, &sev) == -1){
+        int e = errno;
+        close (signalfd_);
+        throw Err::make ("epoll_ctl ADD signal failerd", e);
+    }
+    runnig_ = true;
+    
     if (fd_ == -1) 
     {
         close(epfd_);
@@ -144,7 +169,7 @@ void Network::epoll_run()
 {
     const int MAX_EVENTS = 64;
     epoll_event events[MAX_EVENTS];
-    for(;;) {
+    while (runnig_) {
         int n = epoll_wait(epfd_, events, MAX_EVENTS, -1);
         if (n == -1) 
         {
@@ -156,6 +181,15 @@ void Network::epoll_run()
         {
             int fd = events[i].data.fd;
             uint32_t evs = events[i].events;
+            if (fd == signalfd_){
+                struct signalfd_siginfo fdsi;
+                ssize_t s = read(signalfd_, &fdsi, sizeof(fdsi));
+                if (s == sizeof(fdsi)){
+                    std::cout << "SIGINT received , close service \n";
+                    runnig_ = false;
+                    break;
+                }
+            }
             if (evs & (EPOLLERR | EPOLLHUP)) 
             {
                 epoll_ctl(epfd_, EPOLL_CTL_DEL, fd, 0);
@@ -238,7 +272,6 @@ void Network::new_connection()
         //Comprueba que lla conexion esta en closeexec para cierres automaticos
         int fdfl = fcntl(cfd, F_GETFD, 0);
         if (fdfl != -1) fcntl(cfd, F_SETFD, fdfl | FD_CLOEXEC);
-        
         char ip[INET_ADDRSTRLEN] = {0};
         inet_ntop(AF_INET, &cli.sin_addr, ip, sizeof(ip));
         uint16_t c_port = ntohs(cli.sin_port);
@@ -251,16 +284,12 @@ void Network::new_connection()
             close(cfd);
             throw Err::make("epoll_ctl ADD client failed", e);
         }
-        //std::cout << "new client fd=" << cfd << " [" << ip << ":" << c_port << "]\n";
-        //std::cout << "new client fd=" << cfd << " [" << ip << ":" << c_port << "]\n";
         inbuf_[cfd] = "";
         authed_[cfd] = false;
         tmp_user_= new User();
         tmp_user_->set_ip(ip);
         tmp_user_->set_port(c_port);
         tmp_user_->set_fd(cfd);
-        //send_small(cfd, ":server NOTICE * :Send password (plain or 'PASS <pwd>')\r\n");
-        //send_small(cfd, ":server NOTICE * :Send password (plain or 'PASS <pwd>')\r\n");
     }
 }
 
@@ -289,8 +318,6 @@ bool Network::verify_cap(int fd, std::string& ib)
 void Network::process_line(int fd, std::string& ib )
 {
     std::string res;
-    //std::cout << ib << std::endl;
-    //std::cout << ib << std::endl;
     std::string::size_type first = ib.find('\n'); //comprueba que la linea tiene una linea finaliza en \n
     if (first == std::string::npos)
         return;

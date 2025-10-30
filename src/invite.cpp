@@ -1,9 +1,7 @@
-#include <iostream>
-#include "users.hpp"
-#include "channel.hpp"
-#include "msg.hpp"
 
-msg_  invite(std::string &msg, User& user, std::map<std::string, Channel> &channels_list, std::map<std::string, User> &user_list)
+#include "invite.hpp"
+
+void  invite(std::string &msg, User& user, std::map<std::string, Channel> &channels_list, std::map<std::string, User> &user_list)
 {
     msg_ res;
     size_t pos = msg.find(' ') + 1;
@@ -13,19 +11,14 @@ msg_  invite(std::string &msg, User& user, std::map<std::string, Channel> &chann
     std::map<std::string,User>::iterator it = user_list.find(user_name);
     std::map<std::string,Channel>::iterator it2=channels_list.find(channel_name);
     if (channels_list[channel_name].operators.find(user.get_nick()) == channels_list[channel_name].operators.end())
-		return res;
+		return ;
     if (it!=user_list.end() && it2!=channels_list.end())
     {  
         user_list[user_name].add_invite(channel_name);
-
 		res.user = ":server 341 " + user.get_nick() + " " + user_name + " " + channel_name + "\r\n" ;
 		res.all_user = ":"+user.get_nick()+"!"+user.get_name()+"@"+user.get_ip()+" INVITE "+user_name+" :"+channel_name+ "\r\n" ;
 		res.channel = channel_name;
-        //TODO
-        //---------PARA MANDAR AL OTRO USER----
-        //res2 = ":"+user.get_nick()+"!"+user.get_name()+"@"+user.get_ip()+" INVITE "+user_name+" :#"+channel_name+ "\r\n" ;
-        //res2 =  :Alice!alice@host INVITE Bob :#secretchannel
+        Commands::send_to_all(user.get_fd(),channels_list,res);
     }
-	//faltan errores
-    return res;
+    return;
 }

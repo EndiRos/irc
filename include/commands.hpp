@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 09:01:56 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/28 11:43:16 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/30 10:23:13 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,14 @@
 #include "channel.hpp"
 #include "mode.hpp"
 #include "join.hpp"
-#include "kick.h"
+#include "kick.hpp"
 #include "utils.hpp"
 #include <unistd.h>
 #include "msg.hpp"
 #include "quit.hpp"
 #include "topic.hpp"
 #include "who.hpp"
-#include "invite.h"
+#include "invite.hpp"
 #include "privmsg.hpp"
 
 

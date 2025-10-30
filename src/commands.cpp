@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/10/28 12:34:06 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/30 11:04:31 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,11 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
         }
         switch (i)
         {
-        case 0:
-            break;
         case 6:
             privmsg(trim ,user, channels_list,user_list);
             break;
         case 3:
-            quit(user, user_list);
+            quit(user, user_list, channels_list);
             break;
         case 10:
             topic(trim, user, channels_list,user_list);
@@ -63,10 +61,10 @@ void Commands::execute(std::string &msg, User& user, std::map<std::string, User>
             mode(trim, user, channels_list);
             break;
         case 14:
-            res = invite(trim, user, channels_list,user_list);
+            invite(trim, user, channels_list,user_list);
             break;
         case 15:
-            res = kick(trim, user, channels_list,user_list);
+            kick(trim, user, channels_list,user_list);
             break;
         case 8:
             join_chanel(trim,user,channels_list,user_list);

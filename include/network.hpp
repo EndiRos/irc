@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 09:31:48 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/13 11:21:16 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/10/30 11:24:22 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@
 #include <map>
 #include <stdlib.h>
 #include <sstream>
+#include <signal.h>
+#include <sys/signalfd.h>
 
 #include "users.hpp"
 #include "utils.hpp"
@@ -47,6 +49,8 @@ class Network
         sockaddr_in addr_;
         std::string server_ip_;
         std::string pass_;
+        int signalfd_;
+        bool runnig_;
 
         std::map<int, std::string> inbuf_;
         std::map<int, bool> authed_;
