@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 09:00:56 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/30 11:50:54 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/11/03 13:15:42 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,35 +32,17 @@ void print_log(const std::string& msg) {
     
 void Network::setup_socket()
 {
-    int flags_;
-    int fdflags_;
     int yes_;
     
     yes_= 1;
-    fd_ = socket(AF_INET, SOCK_STREAM, 0);
+    fd_ = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, 0);
     if (fd_ == -1){
-        int e = errno;
-        throw Err::make("socket failed",e);
+        throw Err::make("socket failed");
     }
-
     if (setsockopt(fd_, SOL_SOCKET, SO_REUSEADDR, &yes_, sizeof(yes_)) == -1) {
-        int e = errno;
         close(fd_);
-        throw Err::make("setsockopt SO_REUSEADDR failed",e);
+        throw Err::make("setsockopt SO_REUSEADDR failed");
     }
-
-    flags_ = fcntl(fd_, F_GETFL, 0);
-    if (flags_ == -1 || fcntl(fd_, F_SETFL, flags_ | O_NONBLOCK) == -1) {
-        close(fd_);
-        int e = errno;
-        throw Err::make("fcntl O_NONBLOCK failed",e);
-    }
-
-    fdflags_ = fcntl(fd_, F_GETFD, 0);
-    if (fdflags_ != -1)
-        (void)fcntl(fd_, F_SETFD, fdflags_ | FD_CLOEXEC);
-    
-    
     my_memset(&addr_, 0, sizeof(addr_));
     addr_.sin_family = AF_INET;
     addr_.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -71,98 +53,56 @@ void Network::bind_socket()
 {
     if (bind(fd_, reinterpret_cast<sockaddr*>(&addr_), sizeof(addr_)) == -1)
     {
-        int e = errno;
         close(fd_);
-        throw Err::make("bind failed", e);
+        throw Err::make("bind failed");
     }
     if (listen(fd_, SOMAXCONN) == -1)
     {
-        int e = errno;
         close(fd_);
-        throw Err::make("listen failed", e);
+        throw Err::make("listen failed");
     }
-}
-
-std::string Network::pick_ipv4()
-{
-    struct ifaddrs *ifaddr = 0;
-    if (getifaddrs(&ifaddr) == -1)
-        return "127.0.0.1";
-    std::string chosen = "127.0.0.1";
-    for (struct ifaddrs *ifa = ifaddr; ifa; ifa = ifa->ifa_next)
-    {
-        if (!ifa->ifa_addr) continue;
-        if (ifa->ifa_addr->sa_family != AF_INET) continue;
-        // Evitar loopback
-        if ((ifa->ifa_flags & IFF_LOOPBACK) != 0) continue;
-        // Debe estar “UP” y “RUNNING”
-        if ((ifa->ifa_flags & IFF_UP) == 0) continue;
-        if ((ifa->ifa_flags & IFF_RUNNING) == 0) continue;
-        char host[NI_MAXHOST];
-        if (getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
-                        host, sizeof(host), 0, 0, NI_NUMERICHOST) == 0)
-        {
-            chosen = host;
-            break;
-        }
-    }
-    freeifaddrs(ifaddr);
-    return chosen;
 }
 
 void Network::epoll_setup()
 {
     
-    epfd_ = epoll_create1(EPOLL_CLOEXEC);
+    epfd_ = epoll_create1(0);
     if (epfd_== -1)
-    {
-        int e = errno;
-        throw Err::make("epoll_create1 failed", e);
-    }
-    
+        throw Err::make("epoll_create1 failed");
+
     sigset_t mask;
     sigemptyset(&mask);
     sigaddset(&mask, SIGINT);
     if (sigprocmask(SIG_BLOCK, &mask, 0)){
-        int e = errno;
-        throw Err::make ("sigpocmask failed", e);
+        throw Err::make ("sigpocmask failed");
     }
     signalfd_ = signalfd(-1, &mask, SFD_NONBLOCK | SFD_CLOEXEC);
-    if (signalfd_ == -1 ){
-        int e = errno;
-        throw Err::make ("signal_fd failed", e);
-    }
+    if (signalfd_ == -1 )
+        throw Err::make ("signal_fd failed");
     epoll_event sev;
     my_memset(&sev,0,sizeof(sev));
     sev.events = EPOLLIN;
     sev.data.fd = signalfd_;
     if (epoll_ctl(epfd_, EPOLL_CTL_ADD, signalfd_, &sev) == -1){
-        int e = errno;
         close (signalfd_);
-        throw Err::make ("epoll_ctl ADD signal failerd", e);
+        close (epfd_);
+        throw Err::make ("epoll_ctl ADD signal failerd");
     }
     runnig_ = true;
     
-    if (fd_ == -1) 
-    {
-        close(epfd_);
-        return ;
+   if (fd_ != -1) {
+        epoll_event lev;
+        my_memset(&lev, 0, sizeof(lev));
+        lev.events = EPOLLIN;
+        lev.data.fd = fd_;
+        if (epoll_ctl(epfd_, EPOLL_CTL_ADD, fd_, &lev) == -1) {
+            // limpiar recursos en caso de fallo
+            epoll_ctl(epfd_, EPOLL_CTL_DEL, signalfd_, 0);
+            close(signalfd_);
+            close(epfd_);
+            throw Err::make("epoll_ctl ADD listen fd failed");
+        }
     }
-    epoll_event ev_;
-    my_memset(&ev_, 0, sizeof(ev_));
-    ev_.events = EPOLLIN;
-    ev_.data.fd = fd_;
-    
-    if (epoll_ctl(epfd_, EPOLL_CTL_ADD, fd_, &ev_) == -1)
-    {
-        int e = errno;
-        throw Err::make("epoll_ctl ADD failed", e);
-        close(fd_);
-        close(epfd_);
-        return ;
-    }
-    //std::cout << "Listening on " << server_ip_ <<  " : "<< port_ << std::endl;
-    //std::cout << "Listening on " << server_ip_ <<  " : "<< port_ << std::endl;
 }
 
 void Network::epoll_run() 
@@ -172,10 +112,8 @@ void Network::epoll_run()
     while (runnig_) {
         int n = epoll_wait(epfd_, events, MAX_EVENTS, -1);
         if (n == -1) 
-        {
-            if (errno == EINTR) continue;
-            int e = errno;
-            throw Err::make("epoll_wait failed", e);
+        {   //if (errno == EINTR) continue;
+            throw Err::make("epoll_wait failed");
         }
         for (int i = 0; i < n; ++i) 
         {
@@ -213,40 +151,32 @@ void Network::epoll_run()
                     ssize_t r = read(fd, buf, sizeof buf);
                     if (r > 0) {
                         inbuf_[fd].append(buf, r);
-                    } 
-                    else if (r == 0) 
-                    {
-                        std::cout << "close client fd = " << fd << '\n';
-                        epoll_ctl(epfd_, EPOLL_CTL_DEL, fd, 0);
-                        close(fd);
-                        inbuf_.erase(fd);
-                        authed_.erase(fd);
-                        break;
-                    } 
-                    else 
-                    {
-                        if (errno == EINTR) continue;
-                        if (errno == EAGAIN || errno == EWOULDBLOCK) break;
-                        std::cerr << "read failed fd=" << fd << ": " ": error code " << errno << '\n';
+                        continue;
+                    }
+                    if (r == 0) {
+                        // peer cerró la conexión -> limpiar y salir
                         epoll_ctl(epfd_, EPOLL_CTL_DEL, fd, 0);
                         close(fd);
                         inbuf_.erase(fd);
                         authed_.erase(fd);
                         break;
                     }
-                    print_log(inbuf_[fd]);
-                    process_line(fd, inbuf_[fd]);
-                    inbuf_[fd].clear();
-                    // Procesar líneas completas
-                }
-                    // Si cerramos dentro, salir del bucle de lectura
-                if (inbuf_.find(fd) == inbuf_.end())
+                    // r < 0: tratamos como "no más datos ahora" (sin errno disponible)
+                    // salir del bucle de lectura y procesar lo acumulado
                     break;
-                }
+                } // end while read
+
+                if (inbuf_.find(fd) == inbuf_.end())
+                    continue;
+
+                // procesar buffer acumulado
+                print_log(inbuf_[fd]);
+                process_line(fd, inbuf_[fd]);
+                // no forzamos cerrar aquí; process_line puede modificar el buffer
             }
         }
+    }
 }
-
 
 void Network::new_connection()
 {
@@ -256,37 +186,34 @@ void Network::new_connection()
         socklen_t clen = sizeof(cli);
         if (fd_ < 0) {
             std::cerr << "Error: fd_ inválido antes de accept" << std::endl;
-            // Aquí podrías reabrir el socket o abortar
+            break;
         }
+
         int cfd = accept(fd_, reinterpret_cast<sockaddr*>(&cli), &clen);
-        if (cfd == -1) 
-        {
-            if (errno == EINTR) continue;
-            if (errno == EAGAIN || errno == EWOULDBLOCK) break;
-            int e = errno;
-            throw Err::make("accept failed", e);
+        if (cfd == -1) {
+            // No usamos errno aquí: salimos del bucle de aceptación
+            break;
         }
-        //Comprueba que la conexion establecida es nonblock y si no la pone en non block 
-        int fl = fcntl(cfd, F_GETFL, 0);
-        if (fl != -1) fcntl(cfd, F_SETFL, fl | O_NONBLOCK);
-        //Comprueba que lla conexion esta en closeexec para cierres automaticos
-        int fdfl = fcntl(cfd, F_GETFD, 0);
-        if (fdfl != -1) fcntl(cfd, F_SETFD, fdfl | FD_CLOEXEC);
+
+        // Poner socket en non-blocking (solo F_SETFL con O_NONBLOCK, permitido)
+        fcntl(cfd, F_SETFL, O_NONBLOCK);
+       
         char ip[INET_ADDRSTRLEN] = {0};
         inet_ntop(AF_INET, &cli.sin_addr, ip, sizeof(ip));
         uint16_t c_port = ntohs(cli.sin_port);
+
         epoll_event cev;
         my_memset(&cev, 0, sizeof(cev));
         cev.events = EPOLLIN;
         cev.data.fd = cfd;
         if (epoll_ctl(epfd_, EPOLL_CTL_ADD, cfd, &cev) == -1) {
-            int e = errno;
             close(cfd);
-            throw Err::make("epoll_ctl ADD client failed", e);
+            throw Err::make("epoll_ctl ADD client failed");
         }
+
         inbuf_[cfd] = "";
         authed_[cfd] = false;
-        tmp_user_= new User();
+        tmp_user_ = new User();
         tmp_user_->set_ip(ip);
         tmp_user_->set_port(c_port);
         tmp_user_->set_fd(cfd);
@@ -386,7 +313,6 @@ void Network::process_line(int fd, std::string& ib )
 Network::Network(uint16_t port, std::string password):port_ (port), pass_(password)
 {
     com = new Commands();
-    server_ip_ = pick_ipv4();  
     setup_socket();
     bind_socket();
     epoll_setup();

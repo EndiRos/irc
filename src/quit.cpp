@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 11:19:43 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/30 10:45:40 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/11/03 13:31:58 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ void quit(User &user,std::map<std::string,User> &user_list, std::map<std::string
             Commands::send_to_one(fd, ret);
     }
     remove_user_all_channels(user,channel_list);
+    
     return;
 }
 
@@ -41,7 +42,15 @@ void remove_user_all_channels(User user, std::map<std::string, Channel> &channel
      for (;channels_it != channel_list.end(); ++channels_it)
      {
         std::map<std::string, User>::iterator user_it = (*channels_it).second.users.find(user.get_nick());
-        if (user_it != (*channels_it).second.users.end())
+        if (user_it != (*channels_it).second.users.end()){
             (*channels_it).second.users.erase(user_it);
+            std::map<std::string, User>::iterator user_begin = (*channels_it).second.users.begin();
+            std::map<std::string, User>::iterator user_end = (*channels_it).second.users.end();
+            std::string channel_name = channels_it->first;
+            for(;user_begin != user_end; ++user_begin)
+            {
+                Commands::refresh_users(user_begin->second,channel_list,channel_name);
+            } 
+        }
      }
 }

@@ -6,7 +6,7 @@
 /*   By: enetxeba <enetxeba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 09:31:48 by enetxeba          #+#    #+#             */
-/*   Updated: 2025/10/30 11:24:22 by enetxeba         ###   ########.fr       */
+/*   Updated: 2025/11/03 10:27:10 by enetxeba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <errno.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <string>
@@ -30,7 +29,6 @@
 #include <sstream>
 #include <signal.h>
 #include <sys/signalfd.h>
-
 #include "users.hpp"
 #include "utils.hpp"
 #include "commands.hpp"
@@ -60,16 +58,9 @@ class Network
         User *tmp_user_;
         Commands *com;
         
-            struct Err {
-            static std::runtime_error make(const char *msg, int e) {
-                std::string s(msg);
-                if (e) {
-                   
-                    std::ostringstream num;
-                    num<<e;
-                    s += num.str();
-                }
-                return std::runtime_error(s);
+        struct Err {
+             static std::runtime_error make(const char *msg) {
+            return std::runtime_error(std::string(msg));
             }
         };
         void setup_socket();
